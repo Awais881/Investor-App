@@ -1,0 +1,188 @@
+.HA_main_div_of_from {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+  /* background-color:aqua ; */
+}
+
+.HA_main_div_scnd {
+  width: 50vmax;
+  height: 35vmax;
+  /* background-color: blueviolet; */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.HA_form_main_div {
+  /* display: flex; */
+  flex-direction: column;
+  align-items: center;
+  width: 30vmax;
+  height: auto;
+  padding: 20px;
+  background-color: white;
+}
+
+.loginformfields {
+  margin-bottom: 16px !important;
+}
+
+.HA_from_heading_text {
+  font-size: 22px;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.6px;
+  color: #4E97FD;
+  font-size: 40px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase
+}
+
+.HA_from_heading_text1 {
+  text-align: center;
+  /* font-family: Georgia, 'Times New Roman', Times, serif; */
+  font-family: 'Montserrat', sans-serif;
+  /* font-family: 'Mulish', sans-serif; */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  color: #4E97FD;
+}
+
+.HA_from_email_text {
+  font-family: 'Poppins', sans-serif;
+
+  color: gray;
+
+}
+
+.HA_from_input_feil_MAin_div {
+  width: 100%;
+  margin-bottom: 30px;
+  border-bottom: 1px solid gray;
+}
+
+.HA_from_input_feild {
+  width: 80%;
+  height: 100%;
+  border-top-style: none;
+  border-right-style: none;
+  border-bottom-style: none;
+  border-left-style: none;
+  /* border-radius: 50px; */
+  background-color: white;
+  padding-left: 10px;
+  /* color: black; */
+}
+
+.HA_from_input_feild:focus {
+  outline: none;
+}
+
+.HA_from_input_feild_main {
+  width: 100%;
+  height: 40px;
+  /* background-color: gold; */
+}
+
+.HA_from_main_div_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  /* background-color:aqua ; */
+}
+
+.HA_from_login_btn_div {
+  width: 50% !important;
+  /* height: 50px !important; */
+  font-family: 'Poppins', sans-serif !important;
+  color: white !important;
+  font-weight: 500 !important;
+  font-size: 18px !important;
+  border-radius: 50px !important;
+  background-color: #6397FF !important;
+  border: none !important;
+
+}
+
+.HA_from_login_btn_div:hover {
+
+  background-color: #4264a7 !important;
+
+}
+
+.HA_from_link_MAIn {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  margin-bottom: 20px;
+}
+
+.HA_from_link_text {
+  color: gray;
+  /* font-family: 'Mulish', sans-serif;
+  font-family: 'Poppins', sans-serif;
+  font-family: 'Sniglet', cursive; */
+  font-family: 'Poppins', sans-serif;
+
+}
+
+.HA_from_error_main_div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-top: -30px;
+  margin-bottom: 15px;
+
+}
+
+.HA_from_error_text {
+  color: red;
+  font-size: small;
+  margin-right: 5px;
+}
+
+.swal.fire-button--confirmButton {
+  background-color: black;
+}
+
+@media screen and (max-width: 787px) {
+  .HA_form_main_div {
+    width: 41vmax;
+  }
+
+  .HA_from_heading_text1 {
+
+    font-size: 25px;
+
+  }
+
+  .mb-none {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 426px) {
+  .HA_form_main_div {
+    width: 53vmax;
+  }
+}
+
+.colored-toast.swal2-icon-success {
+  background-color: #a5dc86 !important;
+}
+
+.colored-toast.swal2-icon-error {
+  background-color: #f27474 !important;
+}

@@ -1,0 +1,75 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+* {
+  font-family: "Inter", sans-serif;
+}
+
+.cs-conversation__info {
+  min-height: 1.5em;
+}
+
+.fn400 {
+  font-weight: 400 !important;
+}
+
+.cs-message__html-content {
+  font-weight: 400;
+}
+
+.cs-avatar.cs-avatar--md img {
+  /* background: red; */
+  border-radius: 7px;
+  padding: 5px;
+  background: aliceblue;
+}
+
+.cs-conversation-header {
+  padding: 18px !important;
+}
+
+.cs-conversation-header__content {
+  font-size: 18px !important;
+}
+
+.cs-conversation__info {
+  display: none;
+}
+
+.cs-conversation__name {
+  padding: 5px;
+  font-size: 18px !important;
+  font-weight: 500;
+}
+
+.cs-conversation {
+  border-bottom: 0.5px solid lightgrey !important;
+  padding: 16px !important;
+}
+
+input.searchInput {
+  padding: 10px;
+  border: 0.5px solid lightgrey;
+  border-radius: 4px;
+  width: 95%;
+  margin: 5px;
+}
+
+input.searchInput:focus {
+  box-shadow: none !important;
+  border-color: #0a80ff !important;
+  outline: #0a80ff;
+}
+
+.searchContainer {
+  padding: auto !important;
+  text-align: center;
+  width: 100%;
+}
+
+.cs-message__content {
+  background: #ebebeb !important;
+}
+
+.cs-message__content {
+  padding: 10px 20px !important;
+}
