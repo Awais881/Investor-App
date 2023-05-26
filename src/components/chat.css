@@ -1,0 +1,13 @@
+.conversationList{
+    padding: 15px;
+    margin-top: 10px;
+    width: 100%;
+}
+.conversations{
+   margin-top: 20px;
+   
+}
+.conversations:hover,
+.conversations:focus {
+    background-color: #F0F0F0;
+}

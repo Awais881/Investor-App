@@ -1,4 +1,4 @@
-
+import   './chat.css'
 import { useMemo, useCallback, useEffect, useContext, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -55,7 +55,7 @@ export const Chat = ({ user }: { user: User }) => {
   // let { state, dispatch } = useContext(GlobalContext);
 
 
-   
+
  
   // const user_Data = useContext(GlobalContext);
 
@@ -67,9 +67,12 @@ export const Chat = ({ user }: { user: User }) => {
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   const [userId, setUserId] = useState(localStorage.getItem("user_ID"));
   const [sidebarStyle, setSidebarStyle] = useState({});
-  let [channelDetails, setChannelDetails] = useState([]);
+  // let [channelDetails, setChannelDetails] = useState([]);
+  let [userChannel, setUserChannel] = useState<any>([]);
+  
   const [chatContainerStyle, setChatContainerStyle] = useState({});
   const [messages, setMessages] = useState([]);
+  const [name, setName] = useState(null);
   const [conversationContentStyle, setConversationContentStyle] = useState({});
 
   const [conversationAvatarStyle, setConversationAvatarStyle] = useState({});
@@ -97,31 +100,35 @@ export const Chat = ({ user }: { user: User }) => {
       Authorization: `Bearer ${user_Token}`,
     },
   };
-  const getMessages = async () => {
-    try {
-      const response = await axios.get(
-        "https://cloud1.sty-server.com/api/channel/message",
-        {
-          params: {
-            channel_id: userId,
-          },
-          headers: headers,
-        }
-      );
-      setMessages(response.data);
-    } catch (error) {
-      console.log("Error fetching messages:", error);
-    }
-  };
+  // const getMessages = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://cloud1.sty-server.com/api/channel/message",
+  //       {
+  //         params: {
+  //           channel_id: 1,
+  //         },
+  //         headers: headers,
+  //       }
+  //     );
+  //     setMessages(response.data);
+    
+  //   } catch (error) {
+  //     console.log("Error fetching messages:", error);
+  //   }
+  // };
   
   const getChannels = async () => {
 
-
+   
      try {
       let response = await axios.get(`https://cloud1.sty-server.com/api/channel-user`, headers1)
-        setChannelDetails(response.data);
-      console.log("response: ", response);
       
+        console.log("channel response: ", response.data);
+        console.log("channel id: ", response.data.data);
+        setUserChannel(response?.data?.data)
+         
+    
       
     } catch (error) {
       console.log("axios error: ", error);
@@ -148,12 +155,14 @@ export const Chat = ({ user }: { user: User }) => {
 
 //  }
 
-
+useEffect(() => {
+  console.log("user channel details: ", userChannel);
+}, [userChannel]);
   
  
   useEffect(() => {
     getChannels();
-    getMessages();
+    // getMessages();
 
     if (sidebarVisible) {
       setSidebarStyle({
@@ -212,11 +221,14 @@ export const Chat = ({ user }: { user: User }) => {
           ? activeConversation.participants[0]
           : undefined;
 
-      if (participant) {
-        const user = getUser(participant.id);
-        if (user) {
-          return [<Avatar src={user.avatar} />, user.username];
-        }
+          if (participant) {
+            const user = getUser(participant.id);
+            
+            if (user) {
+              console.log("user", user)
+              return [<Avatar src={user.avatar} />, user.username];
+            }
+          
       }
     }
 
@@ -310,6 +322,7 @@ export const Chat = ({ user }: { user: User }) => {
     console.log("abc");
   };
 
+  
   return (
     <div
       style={{
@@ -318,7 +331,7 @@ export const Chat = ({ user }: { user: User }) => {
       }}
     >
       <MainContainer responsive className="border-0">
-        <Sidebar position="left" scrollable={true} style={sidebarStyle}>
+        <Sidebar position="left" scrollable={true} style={sidebarStyle} className='sidebar'>
           {/* <NavbarChat /> */}
           <div
             style={{
@@ -339,13 +352,13 @@ export const Chat = ({ user }: { user: User }) => {
             >
               <div
                 style={{
-                  marginLeft: 15,
-                  fontSize: 30,
+                  marginLeft: 30,
+                  fontSize: 25  ,
                   fontFamily: "sans-serif",
                   fontWeight: "bold",
                 }}
               >
-                Channels
+                Chats
               </div>
             </div>
             <div className="dropdown">
@@ -378,53 +391,59 @@ export const Chat = ({ user }: { user: User }) => {
             </div>
           </div>
 
-          <ConversationList>
-            {/* Search Input */}
-            <div className="searchContainer">
-              <input
-                type="text"
-                className="searchInput"
-                placeholder="Search Channel"
-              />
-            </div>
 
-            {/* Conversation List */}
+{/* side bar */}
 
-            {conversations.map((c) => {
-              // Helper for getting the data of the first participant
-              const [avatar, name] = (() => {
-                const participant =
-                  c.participants.length > 0 ? c.participants[0] : undefined;
+<ConversationList className='conversationList'>
+  {/* Search Input */}
+  <div className="searchContainer">
+    <input type="text" className="searchInput" placeholder="Search Chats" />
+  </div>
 
-                if (participant) {
-                  const user = getUser(participant.id);
-                  if (user) {
-                    return [<Avatar src={HashImage} />, user.username];
-                  }
-                }
+  {/* Conversation List */}
+  {userChannel.map((c:any) => {
+   
+        console.log("c", c)
 
-                return [undefined, undefined];
-              })();
+   
+    const [avatar, name] = (() => {
+      const participant =
+        c.channel_details.length > 0 ? c.channel_details[0]  : undefined;
+        if (participant) {
+        console.log("participant name", participant)
+      
+        const user = getUser(participant.id);
+      console.log("participant user ", user)
+        if (user) {
+          return [user.name];
+        }
+      }
 
-              return (
-                <Conversation
-                  unreadCnt={c.unreadCounter}
-                  active={activeConversation?.id === c.id}
-                  onClick={handleConversationClick}
-                >
-                  <Conversation.Content
-                    name={name}
-                  
-                    style={conversationContentStyle}
-                    onClick={() => setActiveConversation(c.id)}
-                  />
-                  <Avatar src={HashImage} />
-                </Conversation>
-              );
-            })}
-          </ConversationList>
+      return [undefined, undefined];
+    })();
+    return (
+      <Conversation className='conversations'
+        key={c.id} // Add a unique key prop for each conversation
+        unreadCnt={c.unreadCounter}
+        active={activeConversation?.id === c.id}
+        onClick={handleConversationClick}
+      >
+        <Conversation.Content className='conversationsContent'
+          name={c.channel_details[0].name}
+          //  name={name}
+          style={conversationContentStyle}
+          onClick={() => setActiveConversation(c.id)}
+        />
+        <Avatar src={HashImage} />
+      </Conversation>
+    );
+  })}
+</ConversationList>
+
         </Sidebar>
-
+  
+     {/* messages List */}
+   
         <ChatContainer style={chatContainerStyle}>
           {activeConversation && (
             <ConversationHeader>
@@ -473,7 +492,7 @@ export const Chat = ({ user }: { user: User }) => {
             />
           </MessageList>
 
-          {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
+          <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." />
         </ChatContainer>
         
       </MainContainer>

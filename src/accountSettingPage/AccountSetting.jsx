@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../Context/context';
 import  Loader  from '../assets/loader.gif';
+import { notification } from 'antd';
 const useStyles = makeStyles((theme) => ({
   form: {
     display: 'flex',
@@ -23,9 +24,10 @@ const Form = () => {
 
   const classes = useStyles();
   const [checked, setChecked] = React.useState(true);
+  const [notification, setNotification] = React.useState("enable");
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
@@ -33,6 +35,10 @@ const Form = () => {
   let { state, dispatch } = useContext(GlobalContext);
   // console.log('userAccountData', userAccountData)
 
+
+
+  // setName(state.user.name)
+  // setEmail (state.user.email)
   useEffect(() => {
     getUserData()
   }, []);
@@ -49,6 +55,7 @@ const Form = () => {
       .then(function (response) {
         // console.log(response?.data?.status);
         if (response?.data?.status == 200) {
+        
           dispatch({
              type: 'USER_LOGIN',
             payload: response.data.user
@@ -119,7 +126,8 @@ const Form = () => {
 
     const data = {
       password: password,
-      password_confirmation: confirmPassword
+      password_confirmation: confirmPassword,
+      notification: notification
     }
 
     // if (!name) {
@@ -152,7 +160,7 @@ const Form = () => {
       console.log('Confirm password:', confirmPassword);
 
       axios
-        .post(`https://cloud1.sty-server.com/api/change/password`, data, headers)
+        .put(`https://cloud1.sty-server.com/api/change/password`, data, headers)
         .then(function (response) {
           console.log(response);
           if (response?.data?.status == 200) {
@@ -171,6 +179,7 @@ const Form = () => {
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
+    setNotification("disable");
     console.log(checked)
   };
 
@@ -193,7 +202,7 @@ const Form = () => {
               className="formfields"
               label="Name"
               type="text"
-              value={state?.name}
+              value={state.user[0].name}
               // onChange={(event) => setName(event.target.value)}
               error={!!errors.name}
               helperText={errors.name}
@@ -206,7 +215,7 @@ const Form = () => {
               className="formfields"
               label="Email"
               type="email"
-              value={state?.email}
+              value={state.user[0].email}
               // onChange={(event) => setEmail(event.target.value)}
               // error={!!errors.email}
               // helperText={errors.email}
