@@ -4,10 +4,12 @@ import './index.css';
 // import App from './App';
 import reportWebVitals from './reportWebVitals';
 import FrontPage from './FrontPage';
-
+import GlobalContext from "./Context/context"
 ReactDOM.render(
   <React.StrictMode>
+  <GlobalContext>
     <FrontPage />
+  </GlobalContext >
   </React.StrictMode>,
   document.getElementById('root')
 );

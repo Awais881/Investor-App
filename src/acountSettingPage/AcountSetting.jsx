@@ -1,23 +1,10 @@
 import React from 'react'
-import { useEffect } from "react";
 import className from './AcountSetting.css'
 import Switch from '@mui/material/Switch';
 import image from '../assets/undraw_Development_re_g5hq.png'
-import { Link, useNavigate, useLocation } from "react-router-dom";
 const AcountSetting = () => {
     const [checked, setChecked] = React.useState(true);
-    const navigate = useNavigate();
 
-    const user_Token = localStorage.getItem("token");
-    const cat2 = localStorage.getItem("email");
-
-    useEffect(() => {
-        // Check if the user is already authenticated
-        if (!user_Token) {
-          navigate("/login");
-        }
-      }, [user_Token, navigate]);
-    
     const handleChange = (event) => {
         setChecked(event.target.checked);
         console.log(checked)

@@ -3,7 +3,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import className from './Login.css'
 import { Link } from 'react-router-dom'
-import UserContext from '../../Context/UserContext'
+import UserContext from '../../Context/context'
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
 import image from '../../assets/loginpage.png'
@@ -15,7 +15,7 @@ import Spinner from 'react-spinner-material';
 
 const ForgotPsword = () => {
   const hellow = useContext(UserContext)
-  console.log(hellow.userState.token)
+  
 
 
 

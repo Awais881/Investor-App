@@ -1,31 +1,62 @@
-import React, { useState , useContext,useEffect} from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import Swal from 'sweetalert2'
+
 import axios from "axios";
+// import $ from "jquery";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { Link, useNavigate } from "react-router-dom";
+import classNameName from "./Login.css";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
-import { InputAdornment } from "@material-ui/core";
+import InfoIcon from "@mui/icons-material/Info";
+import { Formik } from "formik";
 import image from "../../assets/loginpage.png";
 import EmailIcon from "@mui/icons-material/Email";
-import { baseURl } from "../../constants";
-import UserContext from "../../Context/UserContext";
+import { InputAdornment } from "@material-ui/core";
+import UserContext from "../../Context/context";
+// import { baseURl } from "../../constants";
 
+import { GlobalContext } from '../../Context/context'
+import  Loader   from "../../assets/loader.gif";
+// import React from "react";
+// import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
+// import "sweetalert2/src/sweetalert2.scss";
 
-
+// CommonJS
 const LoginPage = () => {
-  const user = useContext(UserContext);
+  // const user = useContext(UserContext);
 
   const navigate = useNavigate();
-
+let { state, dispatch } = useContext(GlobalContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
-  console.log("user_Token", user_Token);
+  // console.log("user_Token", user_Token);
 
-  //Toaster messages function
+
+
+  // useEffect(() => {
+  //   // Check if the user is already authenticated
+  //   if (user_Token) {
+
+  //     navigate("/");
+  //   }
+  //   else {
+
+  //     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '100vh' }}>
+  //     <img width={300} src={Loader} alt="loading" />
+  //      </div>
+  //   }
+
+  // }, [user_Token, navigate]);
+
+
+  // Toaster messages function
   // const Toast = Swal.mixin({
   //   toast: true,
   //   position: "top-right",
@@ -58,115 +89,161 @@ const LoginPage = () => {
   //   });
   // };
 
-const handleSubmit = async (event) => {
-  event.preventDefault();
-  const validationErrors = {};
+  //Login Function
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const validationErrors = {};
 
-  if (!email) {
-    validationErrors.email = "Email is required";
-  } else if (!/\S+@\S+\.\S+/.test(email)) {
-    validationErrors.email = "Invalid email format";
-  }
+    if (!email) {
+      validationErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      validationErrors.email = "Invalid email format";
+    }
 
-  if (!password) {
-    validationErrors.password = "Password is required";
-  } else if (password.length < 6) {
-    validationErrors.password = "Password must be at least 6 characters long";
-  }
+    if (!password) {
+      validationErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      validationErrors.password = "Password must be at least 6 characters long";
+    }
 
-  if (Object.keys(validationErrors).length > 0) {
-    setErrors(validationErrors);
-  } else {
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      // submit the form
+      // console.log('Email:', email);
+      // console.log('Password:', password);
+    }
     try {
-      const login_URL = `${baseURl}api/login`;
-      const response = await axios.post(login_URL, { email, password });
+      const login_URL = `${state.baseUrl}api/login`;
 
-      if (response?.data?.status === 200) {
-        const user_email = response?.data?.data?.user?.email;
+      const response = await axios.post(login_URL, 
+        { email, password }
+        );
+
+      console.log("response", response?.data);
+      
+     
+       
+
+        //Data save to local storage
+       
+        // const user_email = response?.data?.data?.user?.email;
         const user_token = response?.data?.data?.token;
         const user_id = response?.data?.data?.user?.id;
 
         localStorage.setItem("token", user_token);
-        localStorage.setItem("email", user_email);
+        // localStorage.setItem("email", user_email);
         localStorage.setItem("user_ID", user_id);
-        setUserToken(user_token)
-        navigate("/");
-        setEmail("");
-        setPassword("");
+        dispatch({
+          type: 'USER_LOGIN',
+          payload: response.data.user
+          //  token: response?.data?.data?.token,
+      
+      })
 
-        user.setUserState({
-          token: response?.data?.data?.token,
-          id: response?.data?.data?.user?.id,
-          role_id: response?.data?.data?.user?.role_id,
-          name: response?.data?.data?.user?.name,
-          email: response?.data?.data?.user?.email,
-        });
+        // navigate("/");
+        // setEmail("");
+        // setPassword("");
+
+        // Data send in Mobile App WebView
+        // window.ReactNativeWebView.postMessage(response?.data?.data);
+
+        //Context Api State Management
+        // user.setUserState({
+        //   token: response?.data?.data?.token,
+        //   id: response?.data?.data?.user?.id,
+        //   role_id: response?.data?.data?.user?.role_id,
+        //   name: response?.data?.data?.user?.name,
+        //   email: response?.data?.data?.user?.email,
+        //   isLogin: true
+        // });
+      // } 
+
+      
+      if (response?.data?.status === 200 ) {
+        Swal.fire(
+          'Good job!',
+          'You Have Logged In!',
+          'success'
+        )
       } else {
-        // Handle invalid login credentials or display relevant error message
-        alert("Invalid Login Credentials");
-      }
-    } catch (error) {
-      // Handle error from API request
-      console.log("Error:", error);
-      // Display relevant error message to the user
-      alert("An error occurred while logging in");
+       
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong!',
+          footer: '<a href="">Why do I have this issue?</a>'
+        })
+      
+    } 
+  }catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Something went wrong!',
+      footer: '<a href="">Why do I have this issue?</a>'
+    })
+      dispatch({
+        type: 'USER_LOGOUT'
+        //  token: response?.data?.data?.token,
+    
+    })
+
+      // console.log("Error_________________________", error);
+
+      
+     
     }
-  }
-};
-useEffect(() => {
-  // Check if the user is already authenticated
-  if (user_Token) {
-    navigate("/");
-  }
-}, [user_Token, navigate]);
-return (
-  <>
-    <div className="HA_main_div_of_from">
-      <img className="HA_main_div_scnd mb-none" src={image} />
-      <div className="HA_form_main_div">
-        <p className="HA_from_heading_text1">Login</p>
+  };
 
-        <form id="loginForm" onSubmit={handleSubmit}>
-          <TextField
-            className="formfields"
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            error={!!errors.email}
-            helperText={errors.email}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <EmailIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+  return (
+    <>
+      <div className="HA_main_div_of_from">
+        <img className="HA_main_div_scnd mb-none" src={image} />
+        <div className="HA_form_main_div">
+          <p className="HA_from_heading_text1">Login</p>
 
-          <TextField
-            className="formfields"
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            error={!!errors.password}
-            helperText={errors.password}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+          <form id="loginForm" onSubmit={handleSubmit}>
+            <TextField
+              className="formfields"
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              error={!!errors.email}
+              helperText={errors.email}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
+            <TextField
+              className="formfields"
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              error={!!errors.password}
+              helperText={errors.password}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </form>
           <div className="HA_from_link_MAIn">
             <Link className="HA_from_link_text" to="/forget-password">
               Forget Password?
@@ -184,9 +261,11 @@ return (
               Login
             </Button>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
-  </>
-)};
+      <ToastContainer />
+    </>
+  );
+};
+
 export default LoginPage;

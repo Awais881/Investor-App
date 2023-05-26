@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import 'react-toastify/dist/ReactToastify.css';
 import {
   BasicStorage,
   ChatMessage,
@@ -30,8 +31,9 @@ import {
   joeModel2,
 } from "./data/data";
 import { AutoDraft } from "@chatscope/use-chat/dist/enums/AutoDraft";
-import { useEffect } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { GlobalContext } from './Context/context';
 // import { useIsFocused } from '@react-navigation/native';
 // import {Footer} from "./components/Footer";
 
@@ -185,25 +187,31 @@ chats.forEach((c) => {
 
 function App() {
   const navigate = useNavigate();
-
+  // const { state, dispatch } = useContext(GlobalContext);
   const user_Token = localStorage.getItem("token");
   const cat2 = localStorage.getItem("email");
   const cat3 = localStorage.getItem("user_ID");
   console.log("cat------------------", user_Token);
+ 
   // useEffect(() => {
-  //   // Check if the user is already authenticated
-  //   if (!user_Token) {
-  //     navigate("/login");
-  //   }
-  // }, [user_Token, navigate]);
+  //   console.log(user_Token);
+  //   if (user_Token == ("" || null || undefined)) navigate("/login");
+  // }, [user_Token,navigate]);
 
-  useEffect(() => {
-    console.log(user_Token);
-    if (user_Token == ("" || null || undefined)) navigate("/login");
-  }, [user_Token]);
+    // Check if the user is already authenticated
+    if (!user_Token) {
+
+    setTimeout(function() {
+      window.location.href = "./login/Login.jsx";
+  }, 1000);
+    
+      
+    }
+  
 
   return (
     <div className="h-100 d-flex flex-column overflow-hidden">
+      <a href=""></a>
       <Container
         fluid
         className="flex-grow-1 position-relative overflow-hidden"

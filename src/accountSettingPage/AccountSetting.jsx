@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState ,useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -8,7 +8,8 @@ import image from '../assets/acsetting.svg'
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-
+import { GlobalContext } from '../Context/context';
+import  Loader  from '../assets/loader.gif';
 const useStyles = makeStyles((theme) => ({
   form: {
     display: 'flex',
@@ -28,8 +29,9 @@ const Form = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
-  const [userAccountData, setUserAccountData] = useState(null);
-  console.log('userAccountData', userAccountData)
+  // const [userAccountData, setUserAccountData] = useState(null);
+  let { state, dispatch } = useContext(GlobalContext);
+  // console.log('userAccountData', userAccountData)
 
   useEffect(() => {
     getUserData()
@@ -47,13 +49,56 @@ const Form = () => {
       .then(function (response) {
         // console.log(response?.data?.status);
         if (response?.data?.status == 200) {
-          setUserAccountData(response?.data?.user)
+          dispatch({
+             type: 'USER_LOGIN',
+            payload: response.data.user
+          })
         }
       })
       .catch(function (error) {
+        dispatch({
+          type: 'USER_LOGOUT',
+          
+        })
         console.error(error);
       });
   }
+
+
+  // const headers = {
+  //     headers: {
+  //       Authorization: `Bearer ${user_Token}`,
+  //     },
+  //   };
+  // useEffect(() => {
+  //   const getUserData = async () => {
+  //     try {
+  //       const response = await axios.get(`https://cloud1.sty-server.com/api/user`, headers);
+  //       if (response?.data?.status === 200) {
+  //         dispatch({
+  //           type: 'USER_LOGIN',
+  //           payload: response.data
+  //         });
+  //       }
+  //     } catch (error) {
+  //       dispatch({
+  //         type: 'USER_LOGOUT',
+  //       });
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   getUserData();
+  // }, []);
+
+  // if (!state.user || !state.user.email) {
+  //   // Render a loading state or return null until the email data is available
+  //   return (
+  //     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '100vh' }}>
+  //       <img width={300} src={Loader} alt="loading" />
+  //     </div>
+  //   );
+  // }
 
   //Toaster messages function
   const Toast = Swal.mixin({
@@ -115,7 +160,7 @@ const Form = () => {
               icon: 'success',
               title: `Password updated successfully`
             })
-            navigate("/")
+            // navigate("/")
           }
         })
         .catch(function (error) {
@@ -148,7 +193,7 @@ const Form = () => {
               className="formfields"
               label="Name"
               type="text"
-              value={userAccountData?.name}
+              value={state?.name}
               // onChange={(event) => setName(event.target.value)}
               error={!!errors.name}
               helperText={errors.name}
@@ -161,7 +206,7 @@ const Form = () => {
               className="formfields"
               label="Email"
               type="email"
-              value={userAccountData?.email}
+              value={state?.email}
               // onChange={(event) => setEmail(event.target.value)}
               // error={!!errors.email}
               // helperText={errors.email}

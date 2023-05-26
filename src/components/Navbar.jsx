@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from "react";
 import classNameName from './Navbar.css'
-
+import { GlobalContext } from '../Context/context';
 function NavbarChat() {
-    const LOgout=()=>{
+ 
+  let { state, dispatch } = useContext(GlobalContext);
+    const logout=()=>{
 
+      dispatch({
+        type: 'USER_LOGOUT'
+      })
     }
   return (
 <nav className="navbar navbar-dark bg-primary navbar-expand-sm">
@@ -24,7 +29,7 @@ function NavbarChat() {
         <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a className="dropdown-item" href="#">Dashboard</a>
           <a className="dropdown-item" href="#">Edit Profile</a>
-          <a className="dropdown-item" href="#">Log Out</a>
+          <a className="dropdown-item" href="#" onClick={logout}>Log Out</a>
         </div>
       </li>   
     </ul>
