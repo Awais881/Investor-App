@@ -73,6 +73,8 @@ export const Chat = ({ user }: { user: User }) => {
   const [chatContainerStyle, setChatContainerStyle] = useState({});
   const [messages, setMessages] = useState([]);
   const [name, setName] = useState(null);
+  const [activeName, setActiveName] = useState("");
+ 
   const [conversationContentStyle, setConversationContentStyle] = useState({});
 
   const [conversationAvatarStyle, setConversationAvatarStyle] = useState({});
@@ -124,10 +126,10 @@ export const Chat = ({ user }: { user: User }) => {
      try {
       let response = await axios.get(`https://cloud1.sty-server.com/api/channel-user`, headers1)
       
-        console.log("channel response: ", response.data);
-        console.log("channel id: ", response.data.data);
+        console.log("channel response: ", response.data.data);
+       
         setUserChannel(response?.data?.data)
-         
+          //  setActiveName(response?.data?.data.channel_details[0].name)
     
       
     } catch (error) {
@@ -358,7 +360,7 @@ useEffect(() => {
                   fontWeight: "bold",
                 }}
               >
-                Chats
+                Channels
               </div>
             </div>
             <div className="dropdown">
@@ -409,9 +411,11 @@ useEffect(() => {
     const [avatar, name] = (() => {
       const participant =
         c.channel_details.length > 0 ? c.channel_details[0]  : undefined;
+       
+        // setActiveName( c.channel_details[0].name)
         if (participant) {
-        console.log("participant name", participant)
-      
+        
+        console.log("participant ", participant)
         const user = getUser(participant.id);
       console.log("participant user ", user)
         if (user) {
@@ -430,9 +434,9 @@ useEffect(() => {
       >
         <Conversation.Content className='conversationsContent'
           name={c.channel_details[0].name}
-          //  name={name}
+          //  name={'name'}
           style={conversationContentStyle}
-          onClick={() => setActiveConversation(c.id)}
+          onClick={() => {setActiveConversation(c.id); setActiveName(c.channel_details[0].name)}}
         />
         <Avatar src={HashImage} />
       </Conversation>
@@ -445,22 +449,33 @@ useEffect(() => {
      {/* messages List */}
    
         <ChatContainer style={chatContainerStyle}>
-          {activeConversation && (
-            <ConversationHeader>
+        <ConversationHeader>
               <ConversationHeader.Back onClick={handleBackClick} />
 
               <ConversationHeader.Content
-                userName={currentUserName}
+                userName={activeName}
                 // info="Active 10 mins ago"
               />
               <ConversationHeader.Actions>
                 <SwipeableTemporaryDrawer />
               </ConversationHeader.Actions>
             </ConversationHeader>
-          )}
+          {/* {activeConversation && (
+            <ConversationHeader>
+              <ConversationHeader.Back onClick={handleBackClick} />
+
+              <ConversationHeader.Content
+                userName={'mmmm'}
+                // info="Active 10 mins ago"
+              />
+              <ConversationHeader.Actions>
+                <SwipeableTemporaryDrawer />
+              </ConversationHeader.Actions>
+            </ConversationHeader>
+          )} */}
 
           <MessageList typingIndicator={getTypingIndicator()}>
-            {activeConversation &&
+            {/* {activeConversation &&
               currentMessages.map((g) => (
                 <MessageGroup key={g.id} direction={g.direction}>
                   <MessageGroup.Messages>
@@ -477,7 +492,7 @@ useEffect(() => {
                     ))}
                   </MessageGroup.Messages>
                 </MessageGroup>
-              ))}
+              ))} */}
 
             <Message
               // className="fn400"

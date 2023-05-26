@@ -161,28 +161,31 @@ let { state, dispatch } = useContext(GlobalContext);
 
       
       if (response?.data?.status === 200 ) {
-        Swal.fire(
-          'Good job!',
-          'You Have Logged In!',
-          'success'
-        )
-      } else {
+
+        console.log("Login Success" );
+    //     Swal.fire(
+    //       'Good job!',
+    //       'You Have Logged In!',
+    //       'success'
+    //     )
+    //   } else {
        
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong!',
-          footer: '<a href="">Why do I have this issue?</a>'
-        })
+    //     Swal.fire({
+    //       icon: 'error',
+    //       title: 'Oops...',
+    //       text: 'Something went wrong!',
+    //       footer: '<a href="">Why do I have this issue?</a>'
+    //     })
       
     } 
-  }catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: 'Something went wrong!',
-      footer: '<a href="">Why do I have this issue?</a>'
-    })
+  }
+  catch (error) {
+    // Swal.fire({
+    //   icon: 'error',
+    //   title: 'Oops...',
+    //   text: 'Something went wrong!',
+    //   footer: '<a href="">Why do I have this issue?</a>'
+    // })
       dispatch({
         type: 'USER_LOGOUT'
         //  token: response?.data?.data?.token,

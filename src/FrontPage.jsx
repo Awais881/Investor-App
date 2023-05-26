@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
 import axios from 'axios';
-import Loader from './assets/loader (1).gif'
+import Loader from './assets/Rolling-1s-200px.gif'
 import App from './App'
 import LoginPage from './components/login/Login'
 import { GlobalContext } from './Context/context';
@@ -102,7 +102,7 @@ const FrontPage = () => {
            {(state.isLogin === null) ?
 
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '100vh' }}>
-        <img width={500} src={Loader} alt="loading" />
+        <img width={100} src={Loader} alt="loading" />
          </div>
 
           : null}

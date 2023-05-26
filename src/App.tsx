@@ -99,6 +99,8 @@ const joe = new User({
   avatar: joeModel.avatar,
   bio: "",
 });
+
+
 const joe2 = new User({
   id: joeModel2.name,
   presence: new Presence({ status: UserStatus.Available, description: "" }),
@@ -134,6 +136,8 @@ function createConversation(id: ConversationId, name: string): Conversation {
 }
 
 // Add users and conversations to the states
+
+
 chats.forEach((c) => {
   users.forEach((u) => {
     if (u.name !== c.name) {
@@ -192,22 +196,22 @@ function App() {
   const cat2 = localStorage.getItem("email");
   const cat3 = localStorage.getItem("user_ID");
   console.log("cat------------------", user_Token);
- 
+
   // useEffect(() => {
   //   console.log(user_Token);
   //   if (user_Token == ("" || null || undefined)) navigate("/login");
   // }, [user_Token,navigate]);
 
-    // Check if the user is already authenticated
-    if (!user_Token) {
+  // Check if the user is already authenticated
+  if (!user_Token) {
 
-    setTimeout(function() {
+    setTimeout(function () {
       window.location.href = "./login/Login.jsx";
-  }, 1000);
-    
-      
-    }
-  
+    }, 1000);
+
+
+  }
+
 
   return (
     <div className="h-100 d-flex flex-column overflow-hidden">

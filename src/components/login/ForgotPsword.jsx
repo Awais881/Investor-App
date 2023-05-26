@@ -33,7 +33,7 @@ const ForgotPsword = () => {
       popup: 'colored-toast'
     },
     showConfirmButton: false,
-    timer: 4000,
+    timer: 1000,
     timerProgressBar: true
   })
 
