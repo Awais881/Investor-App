@@ -75,9 +75,10 @@ const FrontPage = () => {
 
 
 
-    
+<BrowserRouter>
+
             {(state.isLogin != (null || '' || undefined) && state.isLogin === true) ?
-                <BrowserRouter>
+             
                     <Routes>
                         <Route path="/" element={<App />} />
 
@@ -85,18 +86,18 @@ const FrontPage = () => {
                        
                         <Route path="*" element={<Navigate to="/" replace={true} />} />
                     </Routes>
-                </BrowserRouter>
+                
                 : null}
 
             {state.isLogin == (null || '' || undefined || false) ?
-                <BrowserRouter>
+           
 
                     <Routes>
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/forget-password" element={<ForgotPsword />} />
                         <Route path="*" element={<Navigate to="/login" replace={true} />} />
                     </Routes>
-                </BrowserRouter>
+                
                 : null
             }
            {(state.isLogin === null) ?
@@ -107,7 +108,7 @@ const FrontPage = () => {
 
           : null}
 
-
+</BrowserRouter>
 
         </>
     )

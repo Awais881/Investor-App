@@ -5,10 +5,13 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import FrontPage from './FrontPage';
 import GlobalContext from "./Context/context"
+import { BrowserRouter } from 'react-router-dom';
 ReactDOM.render(
   <React.StrictMode>
   <GlobalContext>
+  <BrowserRouter>
     <FrontPage />
+  </BrowserRouter>
   </GlobalContext >
   </React.StrictMode>,
   document.getElementById('root')

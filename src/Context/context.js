@@ -16,8 +16,7 @@ let data = {
   darkTheme: true,
   user: {},
   isLogin: null,
-  baseUrl: (window.location.href.includes('localhost')) ?
-  `https://cloud1.sty-server.com/` : `/api/v1`,
+  baseUrl: `https://cloud1.sty-server.com/`
   
    
  
