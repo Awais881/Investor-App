@@ -39,7 +39,17 @@ let { state, dispatch } = useContext(GlobalContext);
   // console.log("user_Token", user_Token);
 
 
-
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-right',
+    iconColor: 'white',
+    customClass: {
+      popup: 'colored-toast'
+    },
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true
+  })
   // useEffect(() => {
   //   // Check if the user is already authenticated
   //   if (user_Token) {
@@ -141,51 +151,25 @@ let { state, dispatch } = useContext(GlobalContext);
       
       })
 
-        // navigate("/");
-        // setEmail("");
-        // setPassword("");
-
-        // Data send in Mobile App WebView
-        // window.ReactNativeWebView.postMessage(response?.data?.data);
-
-        //Context Api State Management
-        // user.setUserState({
-        //   token: response?.data?.data?.token,
-        //   id: response?.data?.data?.user?.id,
-        //   role_id: response?.data?.data?.user?.role_id,
-        //   name: response?.data?.data?.user?.name,
-        //   email: response?.data?.data?.user?.email,
-        //   isLogin: true
-        // });
-      // } 
+       
 
       
       if (response?.data?.status === 200 ) {
 
         console.log("Login Success" );
-    //     Swal.fire(
-    //       'Good job!',
-    //       'You Have Logged In!',
-    //       'success'
-    //     )
-    //   } else {
-       
-    //     Swal.fire({
-    //       icon: 'error',
-    //       title: 'Oops...',
-    //       text: 'Something went wrong!',
-    //       footer: '<a href="">Why do I have this issue?</a>'
-    //     })
+
+        Toast.fire({
+          icon: 'success',
+          title: response.data.message
+        })
       
     } 
   }
   catch (error) {
-    // Swal.fire({
-    //   icon: 'error',
-    //   title: 'Oops...',
-    //   text: 'Something went wrong!',
-    //   footer: '<a href="">Why do I have this issue?</a>'
-    // })
+    Toast.fire({
+      icon: 'error',
+      title: "Invalid Login Credentials"
+    })
       dispatch({
         type: 'USER_LOGOUT'
         //  token: response?.data?.data?.token,
