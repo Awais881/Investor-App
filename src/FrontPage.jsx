@@ -75,7 +75,7 @@ const FrontPage = () => {
 
 
 
-<BrowserRouter>
+
 
             {(state.isLogin != (null || '' || undefined) && state.isLogin === true) ?
              
@@ -108,7 +108,7 @@ const FrontPage = () => {
 
           : null}
 
-</BrowserRouter>
+
 
         </>
     )

@@ -102,60 +102,48 @@ export const Chat = ({ user }: { user: User }) => {
       Authorization: `Bearer ${user_Token}`,
     },
   };
-  // const getMessages = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://cloud1.sty-server.com/api/channel/message",
-  //       {
-  //         params: {
-  //           channel_id: 1,
-  //         },
-  //         headers: headers,
-  //       }
-  //     );
-  //     setMessages(response.data);
-    
-  //   } catch (error) {
-  //     console.log("Error fetching messages:", error);
-  //   }
-  // };
-  
   const getChannels = async () => {
 
    
-     try {
-      let response = await axios.get(`https://cloud1.sty-server.com/api/channel-user`, headers1)
+    try {
+     let response = await axios.get(`https://cloud1.sty-server.com/api/channel-user`, headers1)
+     
+       console.log("channel response: ", response.data.data);
       
-        console.log("channel response: ", response.data.data);
-       
-        setUserChannel(response?.data?.data)
-          //  setActiveName(response?.data?.data.channel_details[0].name)
+       setUserChannel(response?.data?.data)
+         //  setActiveName(response?.data?.data.channel_details[0].name)
+   
+     
+   } catch (error) {
+     console.log("axios error: ", error);
+     
+
+   }
+
+ }
+
+
+  const getMessages = async () => {
+    try {
+      const response = await axios.get(
+        "https://cloud1.sty-server.com/api/channel/message",
+        {
+          params: {
+            channel_id: 1,
+          },
+          headers: headers,
+        }
+      );
+      setMessages(response.data.data);
+      console.log("response message", messages)
     
-      
     } catch (error) {
-      console.log("axios error: ", error);
-      
-
+      console.log("Error fetching messages:", error);
     }
+  };
+  
+ 
 
-  }
-//   const getMessages = async () => {
-
-
-//     try {
-//      let response = await axios.get(${`https://cloud1.sty-server.com/api/message?`, {
-//       userId });
-//        setMessages(response.data);
-//      console.log("response: ", response);
-     
-     
-//    } catch (error) {
-//      console.log("axios error: ", error);
-     
-
-//    }
-
-//  }
 
 useEffect(() => {
   console.log("user channel details: ", userChannel);
@@ -164,7 +152,7 @@ useEffect(() => {
  
   useEffect(() => {
     getChannels();
-    // getMessages();
+    getMessages();
 
     if (sidebarVisible) {
       setSidebarStyle({
@@ -475,7 +463,7 @@ useEffect(() => {
           )} */}
 
           <MessageList typingIndicator={getTypingIndicator()}>
-            {/* {activeConversation &&
+             {/* {activeConversation &&
               currentMessages.map((g) => (
                 <MessageGroup key={g.id} direction={g.direction}>
                   <MessageGroup.Messages>
@@ -492,7 +480,7 @@ useEffect(() => {
                     ))}
                   </MessageGroup.Messages>
                 </MessageGroup>
-              ))} */}
+              ))}  */}
 
             <Message
               // className="fn400"
@@ -507,7 +495,7 @@ useEffect(() => {
             />
           </MessageList>
 
-          <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." />
+          {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
         </ChatContainer>
         
       </MainContainer>
