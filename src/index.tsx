@@ -9,9 +9,9 @@ import { BrowserRouter } from 'react-router-dom';
 ReactDOM.render(
   <React.StrictMode>
   <GlobalContext>
-  <BrowserRouter>
+    <BrowserRouter>
     <FrontPage />
-  </BrowserRouter>
+    </BrowserRouter>
   </GlobalContext >
   </React.StrictMode>,
   document.getElementById('root')

@@ -1,10 +1,12 @@
-import   './chat.css'
+import './chat.css'
 import { useMemo, useCallback, useEffect, useContext, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import LogoutIcon from "@mui/icons-material/Logout";
-import axios  from "axios";
+import axios from "axios";
 import InfoIcon from "@mui/icons-material/Info";
-
+import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import {
   MainContainer,
   Sidebar,
@@ -47,7 +49,9 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 import { useNavigate } from "react-router-dom";
 
-import {GlobalContext} from "../Context/context";
+import { GlobalContext } from "../Context/context";
+import { message } from 'antd';
+import { Console } from 'console';
 
 export const Chat = ({ user }: { user: User }) => {
 
@@ -56,40 +60,48 @@ export const Chat = ({ user }: { user: User }) => {
 
 
 
- 
+
   // const user_Data = useContext(GlobalContext);
 
   // const hellow = useContext(GlobalContext);
 
   // console.log(hellow.GlobalContext.token);
   const navigate = useNavigate();
+  // const [isLiked, setIsLiked] = useState(true);
+  const [isBellEnabled, setIsBellEnabled] = useState(() => {
+    const storedState = localStorage.getItem('bellState');
+    return storedState ? JSON.parse(storedState) : true;
+  });
+   const [notification, setNotification] = useState("disable");
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [userMessages, setUserMessages] = useState([]);
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   const [userId, setUserId] = useState(localStorage.getItem("user_ID"));
   const [sidebarStyle, setSidebarStyle] = useState({});
   // let [channelDetails, setChannelDetails] = useState([]);
   let [userChannel, setUserChannel] = useState<any>([]);
-  
+
   const [chatContainerStyle, setChatContainerStyle] = useState({});
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any>([]);
   const [name, setName] = useState(null);
-  const [activeName, setActiveName] = useState("");
- 
+  const [activeName, setActiveName] = useState(""); 
+  const [notificationChannelId, setNotificationChannelId] = useState("");
+  
   const [conversationContentStyle, setConversationContentStyle] = useState({});
 
   const [conversationAvatarStyle, setConversationAvatarStyle] = useState({});
 
   const handleBackClick = () => setSidebarVisible(!sidebarVisible);
 
-  const handleConversationClick = useCallback(() => {
-    if (sidebarVisible) {
-      setSidebarVisible(false);
-    }
-  }, [sidebarVisible, setSidebarVisible]);
+  // const handleConversationClick = useCallback((channelID) => {
+    
+   
+  //   if (sidebarVisible) {
+  //     setSidebarVisible(false);
+  //   }
+  //     //  setChannelId(channelID)
+  // }, [sidebarVisible, setSidebarVisible]);
 
-
-  
-  
   const headers = {
     Authorization: `Bearer ${user_Token}`,
     Accept: "application/json",
@@ -102,66 +114,128 @@ export const Chat = ({ user }: { user: User }) => {
       Authorization: `Bearer ${user_Token}`,
     },
   };
-  // const getMessages = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://cloud1.sty-server.com/api/channel/message",
-  //       {
-  //         params: {
-  //           channel_id: 1,
-  //         },
-  //         headers: headers,
-  //       }
-  //     );
-  //     setMessages(response.data);
-    
-  //   } catch (error) {
-  //     console.log("Error fetching messages:", error);
-  //   }
-  // };
+  // console.log("notoddi", notification )
+ 
+  const data = {
+    channel_id: notificationChannelId,
+    setting: notification
+  }
   
+  const handleConversationClick = useCallback(async (channelId) => {
+    setNotificationChannelId(channelId)
+    try {
+      if (sidebarVisible) {
+        setSidebarVisible(false);
+      }
+    
+      const response = await axios.get("https://cloud1.sty-server.com/api/channel/message",
+         {
+                params: {
+                  channel_id: channelId,
+                },
+                headers: headers,
+              }
+      );
+      setMessages(response.data.data);
+          console.log("response message", messages)
+    
+      // Process the response as needed
+  
+    } catch (error) {
+      console.log("Error fetching messages:", error);
+    }
+  }, [sidebarVisible, setSidebarVisible]);
+  
+
+  const handleLikeClick = () => {
+  
+  
+    const updatedState = !isBellEnabled;
+    setIsBellEnabled(updatedState);
+    localStorage.setItem('bellState', JSON.stringify(updatedState));
+    if(notification== "disable"){   
+      setNotification("enable")
+    }
+    else  setNotification("disable")
+    console.log("notoi", notification )
+
+
+    sendNotification()
+  };
+
   const getChannels = async () => {
 
-   
-     try {
+
+    try {
       let response = await axios.get(`https://cloud1.sty-server.com/api/channel-user`, headers1)
+
+      setUserChannel(response?.data?.data)
+      //  setActiveName(response?.data?.data.channel_details[0].name)
       
-        console.log("channel response: ", response.data.data);
-       
-        setUserChannel(response?.data?.data)
-          //  setActiveName(response?.data?.data.channel_details[0].name)
-    
-      
+            console.log("channel ids ", response?.data?.data?.channel_details[0].id);
+
+
     } catch (error) {
       console.log("axios error: ", error);
-      
+
 
     }
 
   }
-//   const getMessages = async () => {
+
+  const searchChannels = async () => {
 
 
-//     try {
-//      let response = await axios.get(${`https://cloud1.sty-server.com/api/message?`, {
-//       userId });
-//        setMessages(response.data);
-//      console.log("response: ", response);
-     
-     
-//    } catch (error) {
-//      console.log("axios error: ", error);
-     
+    try {
+      let response = await axios.get(`https://cloud1.sty-server.com/api/channel/search`, headers1)
 
-//    }
+      setUserChannel(response?.data?.data)
+      //  setActiveName(response?.data?.data.channel_details[0].name)
+      
+            console.log("channel ids ", response?.data?.data?.channel_details[0].id);
 
-//  }
 
-useEffect(() => {
-  console.log("user channel details: ", userChannel);
-}, [userChannel]);
+    } catch (error) {
+      console.log("axios error: ", error);
+
+
+    }
+
+  }
+
   
- 
+  const sendNotification = async () => {
+    try {
+      const response = await axios.put(
+        "https://cloud1.sty-server.com/api/notification/setting",
+       
+
+        data, headers1
+          // params: {
+          //     channel_id: notificationChannelId,
+          //      setting: notification
+          // },
+          // headers: {
+          //   Authorization: `Bearer ${user_Token}`,
+          // }
+       
+      );
+    
+
+    } catch (error) {
+      console.log("Error fetching messages:", error);
+    }
+  };
+
+
+
+
+  useEffect(() => {
+    console.log("user channel details: ", userChannel);
+    console.log("user message details: ", messages);
+  }, [userChannel, messages]);
+
+
   useEffect(() => {
     getChannels();
     // getMessages();
@@ -223,14 +297,14 @@ useEffect(() => {
           ? activeConversation.participants[0]
           : undefined;
 
-          if (participant) {
-            const user = getUser(participant.id);
-            
-            if (user) {
-              console.log("user", user)
-              return [<Avatar src={user.avatar} />, user.username];
-            }
-          
+      if (participant) {
+        const user = getUser(participant.id);
+
+        if (user) {
+          console.log("user", user)
+          return [<Avatar src={user.avatar} />, user.username];
+        }
+
       }
     }
 
@@ -305,14 +379,14 @@ useEffect(() => {
 
     // dispatch({
     //   type: 'USER_LOGOUT',
-     
+
     // })
-   
-    
- 
-      localStorage.clear();
-      navigate("/login");
-  
+
+
+
+    localStorage.clear();
+    navigate("/login");
+
 
   };
 
@@ -324,7 +398,7 @@ useEffect(() => {
     console.log("abc");
   };
 
-  
+
   return (
     <div
       style={{
@@ -355,7 +429,7 @@ useEffect(() => {
               <div
                 style={{
                   marginLeft: 30,
-                  fontSize: 25  ,
+                  fontSize: 25,
                   fontFamily: "sans-serif",
                   fontWeight: "bold",
                 }}
@@ -394,72 +468,77 @@ useEffect(() => {
           </div>
 
 
-{/* side bar */}
+          {/* side bar */}
 
-<ConversationList className='conversationList'>
-  {/* Search Input */}
-  <div className="searchContainer">
-    <input type="text" className="searchInput" placeholder="Search Chats" />
-  </div>
+          <ConversationList className='conversationList'>
+            {/* Search Input */}
+            <div className="searchContainer">
+              <input type="text" className="searchInput" placeholder="Search Chats"  />
+            </div>
 
-  {/* Conversation List */}
-  {userChannel.map((c:any) => {
-   
-        console.log("c", c)
+            {/* Conversation List */}
+            {userChannel.map((c: any) => {
 
-   
-    const [avatar, name] = (() => {
-      const participant =
-        c.channel_details.length > 0 ? c.channel_details[0]  : undefined;
-       
-        // setActiveName( c.channel_details[0].name)
-        if (participant) {
-        
-        console.log("participant ", participant)
-        const user = getUser(participant.id);
-      console.log("participant user ", user)
-        if (user) {
-          return [user.name];
-        }
-      }
+              console.log("c", c)
 
-      return [undefined, undefined];
-    })();
-    return (
-      <Conversation className='conversations'
-        key={c.id} // Add a unique key prop for each conversation
-        unreadCnt={c.unreadCounter}
-        active={activeConversation?.id === c.id}
-        onClick={handleConversationClick}
-      >
-        <Conversation.Content className='conversationsContent'
-          name={c.channel_details[0].name}
-          //  name={'name'}
-          style={conversationContentStyle}
-          onClick={() => {setActiveConversation(c.id); setActiveName(c.channel_details[0].name)}}
-        />
-        <Avatar src={HashImage} />
-      </Conversation>
-    );
-  })}
-</ConversationList>
+
+              // const [avatar, name] = (() => {
+                const participant =
+                  c.channel_details.length > 0 ? c.channel_details[0] : undefined;
+
+                // setActiveName( c.channel_details[0].name)
+              //   if (participant) {
+
+              //     console.log("participant ", participant)
+              //     const user = getUser(participant.id);
+              //     console.log("participant user ", user)
+              //     if (user) {
+              //       return [user.name];
+              //     }
+              //   }
+
+              //   return [undefined, undefined];
+              // })();
+              return (
+                <Conversation className='conversations'
+                  key={c.id} // Add a unique key prop for each conversation
+                  unreadCnt={c.unreadCounter}
+                  active={activeConversation?.id === c.id}
+                  onClick={() => handleConversationClick( c.channel_id)} 
+                >
+                  <Conversation.Content className='conversationsContent'
+                    name={c.channel_details[0].name}
+                    //  name={'name'}
+                    style={conversationContentStyle}
+                    onClick={() => { setActiveConversation(c.id); setActiveName(c.channel_details[0].name) }}
+                  />
+                  <Avatar src={HashImage} />
+                </Conversation>
+              );
+            })}
+          </ConversationList>
 
         </Sidebar>
-  
-     {/* messages List */}
-   
-        <ChatContainer style={chatContainerStyle}>
-        <ConversationHeader>
-              <ConversationHeader.Back onClick={handleBackClick} />
 
-              <ConversationHeader.Content
-                userName={activeName}
-                // info="Active 10 mins ago"
-              />
-              <ConversationHeader.Actions>
-                <SwipeableTemporaryDrawer />
-              </ConversationHeader.Actions>
-            </ConversationHeader>
+        {/* messages List */}
+
+        <ChatContainer style={chatContainerStyle}>
+          <ConversationHeader>
+            {/* <ConversationHeader.Back onClick={handleBackClick} /> */}
+
+            <ConversationHeader.Content
+              userName={activeName}
+            // info="Active 10 mins ago"
+            />
+      
+            <ConversationHeader.Actions>
+              {/* <SwipeableTemporaryDrawer /> */}
+              <div onClick={handleLikeClick}>
+       
+       {isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>}
+ </div>
+            </ConversationHeader.Actions>
+          </ConversationHeader>
           {/* {activeConversation && (
             <ConversationHeader>
               <ConversationHeader.Back onClick={handleBackClick} />
@@ -475,41 +554,67 @@ useEffect(() => {
           )} */}
 
           <MessageList typingIndicator={getTypingIndicator()}>
-            {/* {activeConversation &&
-              currentMessages.map((g) => (
+            {
+              messages.map((g: any) => (
+
                 <MessageGroup key={g.id} direction={g.direction}>
                   <MessageGroup.Messages>
-                    {g.messages.map((m: ChatMessage<MessageContentType>) => (
-                      <Message
-                        key={m.id}
-                        model={{
-                          type: "html",
-                          payload: m.content,
-                          direction: m.direction,
-                          position: "normal",
-                        }}
-                      />
-                    ))}
+
+
+
+                    {/* {/* {g.abc[0].map((m: ChatMessage<MessageContentType>) => ( */}
+                    {/* <Message
+                      key={g.id}
+                      model={{
+                        type: g.content_type,
+                        payload: g.content,
+                        direction: g.direction,
+                        position: "normal",
+                      }}
+
+                    /> */}
+
+                    {/* ))}  */}
+                    {/* <Message
+                  model={{
+                   message: g.content,
+                   sentTime: "15 mins ago",
+                   sender: "Zoe",
+                   direction: "incoming",
+                   position: "single",
+                  
+                  
+                    }}
+              />  */}
+
+                    {/* </MessageGroup.Messages>
+                </MessageGroup>
+            ))} */}
+
+
+                    <Message
+                      model={{
+                        message: g.content,
+                        sentTime: "15 mins ago",
+                        sender: "Zoe",
+                        direction: "incoming",
+                        position: "single",
+                      }}
+                    />
+
                   </MessageGroup.Messages>
                 </MessageGroup>
-              ))} */}
+              ))}
 
-            <Message
-              // className="fn400"
-              model={{
-                message:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                sentTime: "15 mins ago",
-                sender: "Zoe",
-                direction: "incoming",
-                position: "single",
-              }}
-            />
+
           </MessageList>
 
-          <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." />
+
+
+
+          {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
         </ChatContainer>
-        
+
       </MainContainer>
     </div>
   );
