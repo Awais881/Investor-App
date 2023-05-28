@@ -129,6 +129,7 @@ export const Chat = ({ user }: { user: User }) => {
   }
   
   const handleConversationClick = useCallback(async (channelId) => {
+    setLoading(true);
     setNotificationChannelId(channelId)
     try {
       if (sidebarVisible) {
@@ -151,6 +152,7 @@ export const Chat = ({ user }: { user: User }) => {
     } catch (error) {
       console.log("Error fetching messages:", error);
     }
+    setLoading(false);
   }, [sidebarVisible, setSidebarVisible]);
   
 
@@ -475,10 +477,10 @@ export const Chat = ({ user }: { user: User }) => {
 
 
           {/* side bar */}
-          {loading &&  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '50' }}>
+          {/* {loading &&  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '50' }}>
         <img width={50} src={Loader} alt="loading" />
          </div>}
-            {!loading && (
+            {!loading && ( */}
           <ConversationList className='conversationList'>
             {/* Search Input */}
             <div className="searchContainer">
@@ -534,11 +536,19 @@ export const Chat = ({ user }: { user: User }) => {
               );
             })}
           </ConversationList>
-            )}
+            {/* )} */}
         </Sidebar>
 
         {/* messages List */}
 
+        {loading && 
+
+         <div className='loader' >
+
+        <img width={100} src={Loader} alt="loading" />
+         </div>}
+   
+            {!loading && (
         <ChatContainer style={chatContainerStyle}>
           <ConversationHeader>
             {/* <ConversationHeader.Back onClick={handleBackClick} /> */}
@@ -627,11 +637,13 @@ export const Chat = ({ user }: { user: User }) => {
           </MessageList>
     
 
-
+    
 
           {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
         </ChatContainer>
+       
 
+       )}
       </MainContainer>
     </div>
   );
