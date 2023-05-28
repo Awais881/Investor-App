@@ -7,6 +7,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
+import Loader from '../assets/Rolling-1s-200px.gif'
 import {
   MainContainer,
   Sidebar,
@@ -66,8 +67,13 @@ export const Chat = ({ user }: { user: User }) => {
   // const hellow = useContext(GlobalContext);
 
   // console.log(hellow.GlobalContext.token);
+
+
   const navigate = useNavigate();
-  // const [isLiked, setIsLiked] = useState(true);
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredChannels, setFilteredChannels] = useState([]);
+  
   const [isBellEnabled, setIsBellEnabled] = useState(() => {
     const storedState = localStorage.getItem('bellState');
     return storedState ? JSON.parse(storedState) : true;
@@ -83,7 +89,7 @@ export const Chat = ({ user }: { user: User }) => {
 
   const [chatContainerStyle, setChatContainerStyle] = useState({});
   const [messages, setMessages] = useState<any>([]);
-  const [name, setName] = useState(null);
+  // const [name, setName] = useState(null);
   const [activeName, setActiveName] = useState(""); 
   const [notificationChannelId, setNotificationChannelId] = useState("");
   
@@ -93,6 +99,7 @@ export const Chat = ({ user }: { user: User }) => {
 
   const handleBackClick = () => setSidebarVisible(!sidebarVisible);
 
+  const [loading, setLoading] = useState(false);
   // const handleConversationClick = useCallback((channelID) => {
     
    
@@ -164,7 +171,7 @@ export const Chat = ({ user }: { user: User }) => {
   };
 
   const getChannels = async () => {
-
+   setLoading(true);
 
     try {
       let response = await axios.get(`https://cloud1.sty-server.com/api/channel-user`, headers1)
@@ -174,34 +181,33 @@ export const Chat = ({ user }: { user: User }) => {
       
             console.log("channel ids ", response?.data?.data?.channel_details[0].id);
 
-
     } catch (error) {
       console.log("axios error: ", error);
 
 
     }
-
+    setLoading(false);
   }
 
-  const searchChannels = async () => {
+  // const searchChannels = async () => {
 
 
-    try {
-      let response = await axios.get(`https://cloud1.sty-server.com/api/channel/search`, headers1)
+  //   try {
+  //     let response = await axios.get(`https://cloud1.sty-server.com/api/channel/search`, headers1)
 
-      setUserChannel(response?.data?.data)
-      //  setActiveName(response?.data?.data.channel_details[0].name)
+  //     // setUserChannel(response?.data?.data)
+  //     //  setActiveName(response?.data?.data.channel_details[0].name)
       
-            console.log("channel ids ", response?.data?.data?.channel_details[0].id);
+  //           console.log("channel ids ", response?.data?.data?.channel_details[0].id);
 
 
-    } catch (error) {
-      console.log("axios error: ", error);
+  //   } catch (error) {
+  //     console.log("axios error: ", error);
 
 
-    }
+  //   }
 
-  }
+  // }
 
   
   const sendNotification = async () => {
@@ -469,15 +475,24 @@ export const Chat = ({ user }: { user: User }) => {
 
 
           {/* side bar */}
-
+          {loading &&  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '50' }}>
+        <img width={50} src={Loader} alt="loading" />
+         </div>}
+            {!loading && (
           <ConversationList className='conversationList'>
             {/* Search Input */}
             <div className="searchContainer">
-              <input type="text" className="searchInput" placeholder="Search Chats"  />
+              <input type="text" className="searchInput" placeholder="Search Chats"  
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}/>
             </div>
 
             {/* Conversation List */}
-            {userChannel.map((c: any) => {
+          
+            {userChannel
+              .filter((c:any) =>
+              c.channel_details[0].name.toLowerCase().includes(searchQuery.toLowerCase()))
+              .map((c: any) => {
 
               console.log("c", c)
 
@@ -499,6 +514,7 @@ export const Chat = ({ user }: { user: User }) => {
 
               //   return [undefined, undefined];
               // })();
+             
               return (
                 <Conversation className='conversations'
                   key={c.id} // Add a unique key prop for each conversation
@@ -513,11 +529,12 @@ export const Chat = ({ user }: { user: User }) => {
                     onClick={() => { setActiveConversation(c.id); setActiveName(c.channel_details[0].name) }}
                   />
                   <Avatar src={HashImage} />
+                  
                 </Conversation>
               );
             })}
           </ConversationList>
-
+            )}
         </Sidebar>
 
         {/* messages List */}
@@ -552,7 +569,7 @@ export const Chat = ({ user }: { user: User }) => {
               </ConversationHeader.Actions>
             </ConversationHeader>
           )} */}
-
+ 
           <MessageList typingIndicator={getTypingIndicator()}>
             {
               messages.map((g: any) => (
@@ -608,7 +625,7 @@ export const Chat = ({ user }: { user: User }) => {
 
 
           </MessageList>
-
+    
 
 
 
