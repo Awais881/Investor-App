@@ -565,7 +565,7 @@ export const Chat = ({ user }: { user: User }) => {
    {!loading && (
 <ChatContainer style={chatContainerStyle}>
  <ConversationHeader>
-   {/* <ConversationHeader.Back onClick={handleBackClick} /> */}
+   <ConversationHeader.Back onClick={handleBackClick} />
 
    <ConversationHeader.Content
      userName={activeName}
@@ -598,9 +598,9 @@ export const Chat = ({ user }: { user: User }) => {
    {
      messages.map((g: any) => (
 
+         
        <MessageGroup key={g.id} direction={g.direction}>
          <MessageGroup.Messages>
-
 
 
            {/* {/* {g.abc[0].map((m: ChatMessage<MessageContentType>) => ( */}
@@ -632,16 +632,31 @@ export const Chat = ({ user }: { user: User }) => {
        </MessageGroup>
    ))} */}
 
+{/* <Message
+  model={{
+    type: g.content_type === "html" ? (
+      <a href={g.content}>{g.content}</a>
+    ) : (
+      g.content
+    ),
+    sentTime: "15 mins ago",
+    sender: "Zoe",
+    direction: "incoming",
+    position: "single",
+  }}
 
-           <Message
-             model={{
-               message: g.content,
-               sentTime: "15 mins ago",
-               sender: "Zoe",
-               direction: "incoming",
-               position: "single",
-             }}
-           />
+/> */}
+<Message
+  model={{
+    type: g.content_type === "html" ? "html" : "text",
+    message: g.content_type === "html" ? `<a href="${g.link}">${g.link}</a>` : g.content,
+    sentTime: "15 mins ago",
+    sender: "Zoe",
+    direction: "incoming",
+    position: "single",
+  }}
+/>
+
 
          </MessageGroup.Messages>
        </MessageGroup>
