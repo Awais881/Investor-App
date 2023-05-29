@@ -563,9 +563,9 @@ export const Chat = ({ user }: { user: User }) => {
 </div>}
 
    {!loading && (
-<ChatContainer style={chatContainerStyle} className='chats'>
+<ChatContainer style={chatContainerStyle}>
  <ConversationHeader>
-   <ConversationHeader.Back onClick={handleBackClick} />
+   {/* <ConversationHeader.Back onClick={handleBackClick} /> */}
 
    <ConversationHeader.Content
      userName={activeName}
