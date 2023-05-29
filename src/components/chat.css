@@ -12,4 +12,77 @@
 .conversations:focus {
     background-color: #F0F0F0;
 }
+.loader{
+    display: inline-block;
+position: relative;
+top: 50%;
+left: 30%;
+}
+ .image{
+     display: flex;
+ margin-top: 120px;
+    justify-content: center; 
+    width: 70%;
+    height: 300px;
+    /* margin-left: 100px; */
+}
+.welcome{
+   
+    width: 60%;
+    display: flex;
+    justify-content: end; 
+   align-items: center;
+   /* margin-right: 50px; */
+    
+}
 
+
+ /* @media only screen and (max-width: 768px) {
+  .cs-main-container  {
+       
+   width: 100%;
+   padding: 0px;
+
+}
+  
+    } */
+     
+ @media only screen and (max-width: 770px) { 
+    .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps {
+         
+    
+       /* display: flex; */
+       justify-content: center;
+      
+       width: 100% !important;
+     
+      
+       
+       
+    } 
+   .image{
+    display: none;
+   }
+      
+      
+    }  
+    /* .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps */
+    /* @media only screen and (max-width: 768px) { 
+        .cs-main-conatiner{
+             
+             
+        
+          max-width: 100%!important;
+           width: 100% !important;
+         
+          
+           
+           
+        } 
+       .image{
+        display: none;
+       }
+       
+          
+        }  
+     */

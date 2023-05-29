@@ -1,5 +1,6 @@
 import './chat.css'
 import Loader from '../assets/Rolling-1s-200px.gif'
+import welcome from '../assets/welcome.svg'
 import { useMemo, useCallback, useEffect, useContext, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -53,7 +54,7 @@ import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../Context/context";
 import { message } from 'antd';
 import { Console } from 'console';
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 export const Chat = ({ user }: { user: User }) => {
 
   // let { state, dispatch } = useContext(GlobalContext);
@@ -95,7 +96,8 @@ export const Chat = ({ user }: { user: User }) => {
   const [conversationAvatarStyle, setConversationAvatarStyle] = useState({});
   const [activeChannel, setActiveChannel] = useState(null);
   const handleBackClick = () => setSidebarVisible(!sidebarVisible);
-
+  const [selectedChats, setSelectedChats] = useState(false);
+  let { state, dispatch } = useContext <any>(GlobalContext);
   // const handleConversationClick = useCallback((channelID) => {
     
    
@@ -125,8 +127,8 @@ export const Chat = ({ user }: { user: User }) => {
   }
   
   const handleConversationClick = useCallback(async (channelId) => {
+    setSelectedChats(true)
     setLoading(true);
-    setActiveChannel(channelId);
     setNotificationChannelId(channelId)
     try {
       if (sidebarVisible) {
@@ -236,6 +238,12 @@ export const Chat = ({ user }: { user: User }) => {
     }
   };
 
+  // useEffect(() => {
+  //   if(activeName){
+  //     console.log("Name Activated" , activeName)
+  //   }
+   
+  // }, [activeName]);
 
 
 
@@ -410,12 +418,14 @@ export const Chat = ({ user }: { user: User }) => {
 
   return (
     <div
+    
       style={{
         height: "750px",
         position: "relative",
+        
       }}
     >
-      <MainContainer responsive className="border-0">
+      <MainContainer responsive className="border-0  main-container">
         <Sidebar position="left" scrollable={true} style={sidebarStyle} className='sidebar'>
           {/* <NavbarChat /> */}
           <div
@@ -521,15 +531,20 @@ export const Chat = ({ user }: { user: User }) => {
                   key={c.id} // Add a unique key prop for each conversation
                   unreadCnt={c.unreadCounter}
                   active={activeConversation?.id === c.id}
-                  onClick={() => handleConversationClick( c.channel_id)} 
+                  onClick={() => handleConversationClick( c.channel_id)}
+                
+                  
                 >
                   <Conversation.Content className='conversationsContent'
                     name={c.channel_details[0].name}
                     //  name={'name'}
                     style={conversationContentStyle}
-                    onClick={() => { setActiveConversation(c.id); setActiveName(c.channel_details[0].name) }}
+                    onClick={() => { setActiveConversation(c.id);  
+                      setActiveName(c.channel_details[0].name) 
+                    }}
+                   
                   />
-                  <Avatar src={HashImage} />
+                  <Avatar src={HashImage} onClick={() => { setActiveConversation(c.id); setActiveName(c.channel_details[0].name) }} />
                 </Conversation>
               );
             })}
@@ -538,6 +553,8 @@ export const Chat = ({ user }: { user: User }) => {
         </Sidebar>
 
         {/* messages List */}
+
+
         {loading && 
 
 <div className='loader' >
@@ -546,101 +563,103 @@ export const Chat = ({ user }: { user: User }) => {
 </div>}
 
    {!loading && (
-        <ChatContainer style={chatContainerStyle}>
-          <ConversationHeader>
-            {/* <ConversationHeader.Back onClick={handleBackClick} /> */}
+<ChatContainer style={chatContainerStyle} className='chats'>
+ <ConversationHeader>
+   <ConversationHeader.Back onClick={handleBackClick} />
 
-            <ConversationHeader.Content
-              userName={activeName}
-            // info="Active 10 mins ago"
-            />
-      
-            <ConversationHeader.Actions>
-              {/* <SwipeableTemporaryDrawer /> */}
-              <div onClick={handleLikeClick}>
-       
-       {isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>}
- </div>
-            </ConversationHeader.Actions>
-          </ConversationHeader>
-          {/* {activeConversation && (
-            <ConversationHeader>
-              <ConversationHeader.Back onClick={handleBackClick} />
+   <ConversationHeader.Content
+     userName={activeName}
+   // info="Active 10 mins ago"
+   />
 
-              <ConversationHeader.Content
-                userName={'mmmm'}
-                // info="Active 10 mins ago"
-              />
-              <ConversationHeader.Actions>
-                <SwipeableTemporaryDrawer />
-              </ConversationHeader.Actions>
-            </ConversationHeader>
-          )} */}
+   <ConversationHeader.Actions>
+     {/* <SwipeableTemporaryDrawer /> */}
+     <div onClick={handleLikeClick}>
 
-          <MessageList typingIndicator={getTypingIndicator()}>
-            {
-              messages.map((g: any) => (
+{isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>}
+</div>
+   </ConversationHeader.Actions>
+ </ConversationHeader>
+ {/* {activeConversation && (
+   <ConversationHeader>
+     <ConversationHeader.Back onClick={handleBackClick} />
 
-                <MessageGroup key={g.id} direction={g.direction}>
-                  <MessageGroup.Messages>
+     <ConversationHeader.Content
+       userName={'mmmm'}
+       // info="Active 10 mins ago"
+     />
+     <ConversationHeader.Actions>
+       <SwipeableTemporaryDrawer />
+     </ConversationHeader.Actions>
+   </ConversationHeader>
+ )} */}
 
+ <MessageList typingIndicator={getTypingIndicator()}>
+   {
+     messages.map((g: any) => (
 
-
-                    {/* {/* {g.abc[0].map((m: ChatMessage<MessageContentType>) => ( */}
-                    {/* <Message
-                      key={g.id}
-                      model={{
-                        type: g.content_type,
-                        payload: g.content,
-                        direction: g.direction,
-                        position: "normal",
-                      }}
-
-                    /> */}
-
-                    {/* ))}  */}
-                    {/* <Message
-                  model={{
-                   message: g.content,
-                   sentTime: "15 mins ago",
-                   sender: "Zoe",
-                   direction: "incoming",
-                   position: "single",
-                  
-                  
-                    }}
-              />  */}
-
-                    {/* </MessageGroup.Messages>
-                </MessageGroup>
-            ))} */}
-
-
-                    <Message
-                      model={{
-                        message: g.content,
-                        sentTime: "15 mins ago",
-                        sender: "Zoe",
-                        direction: "incoming",
-                        position: "single",
-                      }}
-                    />
-
-                  </MessageGroup.Messages>
-                </MessageGroup>
-              ))}
-
-
-          </MessageList>
+       <MessageGroup key={g.id} direction={g.direction}>
+         <MessageGroup.Messages>
 
 
 
+           {/* {/* {g.abc[0].map((m: ChatMessage<MessageContentType>) => ( */}
+           {/* <Message
+             key={g.id}
+             model={{
+               type: g.content_type,
+               payload: g.content,
+               direction: g.direction,
+               position: "normal",
+             }}
 
-          {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
-        </ChatContainer>
-   )}
-      </MainContainer>
-    </div>
-  );
+           /> */}
+
+           {/* ))}  */}
+           {/* <Message
+         model={{
+          message: g.content,
+          sentTime: "15 mins ago",
+          sender: "Zoe",
+          direction: "incoming",
+          position: "single",
+         
+         
+           }}
+     />  */}
+
+           {/* </MessageGroup.Messages>
+       </MessageGroup>
+   ))} */}
+
+
+           <Message
+             model={{
+               message: g.content,
+               sentTime: "15 mins ago",
+               sender: "Zoe",
+               direction: "incoming",
+               position: "single",
+             }}
+           />
+
+         </MessageGroup.Messages>
+       </MessageGroup>
+     ))}
+
+
+ </MessageList>
+
+
+
+
+ {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
+</ChatContainer>
+
+
+)}
+</MainContainer>
+</div>
+);
 };
 export default Chat;
