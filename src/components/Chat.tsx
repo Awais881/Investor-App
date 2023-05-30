@@ -11,6 +11,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
+
 import {
   MainContainer,
   Sidebar,
@@ -74,14 +75,12 @@ export const Chat = ({ user }: { user: User }) => {
 
   // console.log(hellow.GlobalContext.token);
   const navigate = useNavigate();
+
   const [isScrollbarActive, setIsScrollbarActive] = useState(false);
   // const [isLiked, setIsLiked] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredChannels, setFilteredChannels] = useState([]);
-  const [isBellEnabled, setIsBellEnabled] = useState(() => {
-    const storedState = localStorage.getItem('bellState');
-    return storedState ? JSON.parse(storedState) : true;
-  });
+
 
   const [notificationState, setNotificationState] = useState(() => {
     const storedState = localStorage.getItem('notificationState');
@@ -91,7 +90,7 @@ export const Chat = ({ user }: { user: User }) => {
   // const [previousDate, setPreviousDate] = useState<any>(null);
    const [notification, setNotification] = useState("disable");
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  const [userMessages, setUserMessages] = useState([]);
+  
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   const [userId, setUserId] = useState(localStorage.getItem("user_ID"));
   const [sidebarStyle, setSidebarStyle] = useState({});
@@ -110,7 +109,7 @@ export const Chat = ({ user }: { user: User }) => {
   const [activeChannel, setActiveChannel] = useState(null);
   const handleBackClick = () => setSidebarVisible(!sidebarVisible);
   const [selectedChats, setSelectedChats] = useState(false);
-  let { state, dispatch } = useContext <any>(GlobalContext);
+  let { state, dispatch } = useContext<any>(GlobalContext);
   // const handleConversationClick = useCallback((channelID) => {
   
    
@@ -119,6 +118,7 @@ export const Chat = ({ user }: { user: User }) => {
   //   }
   //     //  setChannelId(channelID)
   // }, [sidebarVisible, setSidebarVisible]);
+  
 
   const headers = {
     Authorization: `Bearer ${user_Token}`,
@@ -161,6 +161,8 @@ export const Chat = ({ user }: { user: User }) => {
       );
       setMessages(response.data.data);
           console.log("response message", messages)
+          
+          
     
       // Process the response as needed
   
@@ -430,10 +432,12 @@ export const Chat = ({ user }: { user: User }) => {
     //   type: 'USER_LOGOUT',
 
     // })
-
-
-
-    localStorage.clear();
+    dispatch({
+      type: 'USER_LOGOUT',
+     
+  
+  })
+     localStorage.clear();
     navigate("/login");
 
 
@@ -458,7 +462,7 @@ export const Chat = ({ user }: { user: User }) => {
       }}
     >
       <MainContainer responsive className="border-0  main-container">
-        <Sidebar position="left" scrollable={true} style={sidebarStyle} className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${isScrollbarActive ? 'ps--active-x' : 'ps ps--active-xx'}`}>
+        <Sidebar position="left" scrollable={true} style={sidebarStyle} className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${isScrollbarActive ? 'ps--active-x' : 'sidebar'}`}>
           {/* <NavbarChat /> */}
           <div
             style={{
@@ -469,12 +473,14 @@ export const Chat = ({ user }: { user: User }) => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              background: "#F0F2F5"
             }}
           >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
+                
               }}
             >
               <div
@@ -483,6 +489,7 @@ export const Chat = ({ user }: { user: User }) => {
                   fontSize: 25,
                   fontFamily: "sans-serif",
                   fontWeight: "bold",
+                  
                 }}
               >
                 Channels
@@ -520,7 +527,7 @@ export const Chat = ({ user }: { user: User }) => {
 
 
           {/* side bar */}
-          <div>
+        
 
           <ConversationList className='conversationList'>
             {/* Search Input */}
@@ -570,7 +577,7 @@ export const Chat = ({ user }: { user: User }) => {
               //   return [undefined, undefined];
               // })();
               return (
-                <Conversation  
+                <Conversation   className='conversations'
                 // className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${
                 //   isScrollbarActive ? 'ps--active-x' : ''
                 // }`}
@@ -581,7 +588,7 @@ export const Chat = ({ user }: { user: User }) => {
                 
                   
                 >
-                  <Conversation.Content className='conversationsContent' id=''
+                  <Conversation.Content className='conversationsContent' 
                     name={c.channel_details[0].name}
                     //  name={'name'}
                     style={conversationContentStyle}
@@ -595,7 +602,7 @@ export const Chat = ({ user }: { user: User }) => {
               );
             })}
           </ConversationList>
-          </div>
+        
 
         </Sidebar>
 
@@ -606,14 +613,14 @@ export const Chat = ({ user }: { user: User }) => {
 
 <div className='loader' >
 
-<img width={100} src={Loader} alt="loading" />
+<img width={50} src={Loader} alt="loading" />
 </div>}
 
    {!loading && (
 <ChatContainer style={chatContainerStyle}>
  <ConversationHeader>
    <ConversationHeader.Back onClick={handleBackClick} />
-
+     
    <ConversationHeader.Content
      userName={activeName}
    // info="Active 10 mins ago"

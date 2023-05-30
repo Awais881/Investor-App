@@ -7,23 +7,30 @@
    margin-top: 0px;
    
 }
-.conversations:hover,
-.conversations:active,
-.conversations:focus {
-    background-color: #F0F0F0;
+/* .sidebar {
+   
+    background-color: #ADD8E6;
+    
 }
-.conversationsContent:focus{
-     background-color: #FFFFFF;
-}
-.searchInput{
+
+
+.conversations{
+   
+    background-color: #ADD8E6;
+}  */
+.cs-search__input{
+    background-color: #F6FBFF;
     padding: 15px;
   
+}
+.cs-search{
+    background-color: #F6FBFF;
 }
 .loader{
     display: inline-block;
 position: relative;
-top: 50%;
-left: 30%;
+top: 40%;
+left: 40%;
 }
  .image{
      display: flex;
@@ -79,7 +86,7 @@ left: 30%;
    .image{
     display: none;
    }
-      
+     
       
     }  
     @media only screen and (max-width: 768px){ 
