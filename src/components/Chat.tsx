@@ -1,5 +1,7 @@
 import './chat.css'
+import React from 'react';
 import Loader from '../assets/Rolling-1s-200px.gif'
+import moment from 'moment';
 import welcome from '../assets/welcome.svg'
 import { useMemo, useCallback, useEffect, useContext, useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
@@ -19,6 +21,8 @@ import {
   ConversationHeader,
   MessageGroup,
   Message,
+  MessageSeparator,
+
   MessageList,
   MessageInput,
   TypingIndicator,
@@ -60,7 +64,7 @@ export const Chat = ({ user }: { user: User }) => {
   // let { state, dispatch } = useContext(GlobalContext);
   // let { state, dispatch } = useContext(GlobalContext);
 
-
+  let previousDate:any = null;
 
 
   // const user_Data = useContext(GlobalContext);
@@ -82,7 +86,7 @@ export const Chat = ({ user }: { user: User }) => {
     return storedState ? JSON.parse(storedState) : {};
   });
 
-
+  // const [previousDate, setPreviousDate] = useState<any>(null);
    const [notification, setNotification] = useState("disable");
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [userMessages, setUserMessages] = useState([]);
@@ -106,7 +110,7 @@ export const Chat = ({ user }: { user: User }) => {
   const [selectedChats, setSelectedChats] = useState(false);
   let { state, dispatch } = useContext <any>(GlobalContext);
   // const handleConversationClick = useCallback((channelID) => {
-    
+  
    
   //   if (sidebarVisible) {
   //     setSidebarVisible(false);
@@ -592,7 +596,7 @@ export const Chat = ({ user }: { user: User }) => {
      <div onClick={() => handleLikeClick(notificationChannelId)}>
 
 {/* {isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>} */}
-{notificationState[notificationChannelId] ? <NotificationsActiveOutlinedIcon /> : <NotificationsOffIcon />}
+{notificationState[notificationChannelId] ? <NotificationsActiveOutlinedIcon color="primary" /> : <NotificationsOffIcon color="primary"  />}
 </div>
    </ConversationHeader.Actions>
  </ConversationHeader>
@@ -610,7 +614,7 @@ export const Chat = ({ user }: { user: User }) => {
    </ConversationHeader>
  )} */}
 
- <MessageList typingIndicator={getTypingIndicator()}>
+  {/* <MessageList typingIndicator={getTypingIndicator()}>
    {
      messages.map((g: any) => (
 
@@ -618,50 +622,14 @@ export const Chat = ({ user }: { user: User }) => {
        <MessageGroup key={g.id} direction={g.direction}>
          <MessageGroup.Messages>
 
+          <MessageSeparator>
+          {moment(g.created_at).format('dddd')}
+          </MessageSeparator>
+          
 
-           {/* {/* {g.abc[0].map((m: ChatMessage<MessageContentType>) => ( */}
-           {/* <Message
-             key={g.id}
-             model={{
-               type: g.content_type,
-               payload: g.content,
-               direction: g.direction,
-               position: "normal",
-             }}
+     
 
-           /> */}
-
-           {/* ))}  */}
-           {/* <Message
-         model={{
-          message: g.content,
-          sentTime: "15 mins ago",
-          sender: "Zoe",
-          direction: "incoming",
-          position: "single",
-         
-         
-           }}
-     />  */}
-
-           {/* </MessageGroup.Messages>
-       </MessageGroup>
-   ))} */}
-
-{/* <Message
-  model={{
-    type: g.content_type === "html" ? (
-      <a href={g.content}>{g.content}</a>
-    ) : (
-      g.content
-    ),
-    sentTime: "15 mins ago",
-    sender: "Zoe",
-    direction: "incoming",
-    position: "single",
-  }}
-
-/> */}
+        
 <Message
   model={{
     type: g.content_type === "html" ? "html" : "text",
@@ -679,9 +647,36 @@ export const Chat = ({ user }: { user: User }) => {
      ))}
 
 
- </MessageList>
+ </MessageList>  */}
 
 
+<MessageList>
+      {messages.map((g:any) => {
+        const currentDate = moment(g.created_at).format('dddd');
+        const showDateSeparator = currentDate !== previousDate;
+        previousDate = currentDate;
+
+        return (
+          <React.Fragment key={g.id}>
+            {showDateSeparator && (
+              <MessageSeparator>
+                {moment(g.created_at).format('dddd')}
+              </MessageSeparator>
+            )}
+
+            <Message
+              model={{
+                type: g.content_type === 'html' ? 'html' : 'text',
+                message: g.content_type === 'html' ? `<a href="${g.link}" target="_blank">${g.link}</a>` : g.content,
+                sentTime: moment(g.created_at).fromNow(),
+                direction: 'incoming',
+                position: 'single',
+              }}
+            />
+          </React.Fragment>
+        );
+      })}
+    </MessageList>
 
 
  {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}

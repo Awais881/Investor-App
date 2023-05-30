@@ -66,4 +66,17 @@ left: 30%;
       
       
     }  
-    
+    @media only screen and (max-width: 768px) { 
+      .cs-main-container .cs-chat-container {
+             
+        
+           /* display: flex; */
+           /* justify-content: center; */
+          
+           width: 100% !important;
+         
+          
+           
+           
+        } 
+ } 
