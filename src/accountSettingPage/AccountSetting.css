@@ -196,4 +196,7 @@ outline:none ;
     }
   }
 
-  
+  .disableInput.disabled input {
+    cursor: not-allowed;
+    pointer-events: none;
+  }

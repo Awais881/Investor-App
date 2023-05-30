@@ -199,7 +199,7 @@ const Form = () => {
         <div className='inputdiv'>
           <form className={classes.form} onSubmit={handleSubmit}>
             <TextField
-              className="formfields"
+              className="formfields disableInput"
               label="Name"
               type="text"
               value={state.user[0].name}
@@ -209,12 +209,15 @@ const Form = () => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+             readOnly: true,
+               }}
             />
 
             <TextField
-              className="formfields"
+              className="formfields disableInput"
               label="Email"
-              type="email"
+              type="text"
               value={state.user[0].email}
               // onChange={(event) => setEmail(event.target.value)}
               // error={!!errors.email}
@@ -222,13 +225,16 @@ const Form = () => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                readOnly: true,
+                  }}
             />
 
             <div className='HA_reset_heading_main'>
               <p className='HA_reser_heading_text'>Reset Your Password</p>
             </div>
             <TextField
-              className="formfields"
+              className="formfields "
               label="Password"
               type="password"
               value={password}

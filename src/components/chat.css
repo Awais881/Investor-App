@@ -12,6 +12,13 @@
 .conversations:focus {
     background-color: #F0F0F0;
 }
+.conversationsContent:focus{
+     background-color: #FFFFFF;
+}
+.searchInput{
+    padding: 15px;
+  
+}
 .loader{
     display: inline-block;
 position: relative;
@@ -37,15 +44,17 @@ left: 30%;
 }
 
 
- /* @media only screen and (max-width: 768px) {
-  .cs-main-container  {
-       
-   width: 100%;
-   padding: 0px;
+.sidebar {
+    /* background-color: #F6FBFF; */
+}
+.conversations{
+    /* background-color: #F6FBFF;   */
+
+
+
+
 
 }
-  
-    } */
      
  @media only screen and (max-width: 768px) { 
     .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps {
@@ -55,28 +64,25 @@ left: 30%;
        /* justify-content: center; */
       
        width: 100% !important;
-     
-      
-       
        
     } 
+    .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps.ps--active-x {
+       
+             
+        width: 100% !important;
+     
+       
+        display: none;
+        
+     } 
+   
    .image{
     display: none;
    }
       
       
     }  
-    @media only screen and (max-width: 768px) { 
-      .cs-main-container .cs-chat-container {
-             
+    @media only screen and (max-width: 768px){ 
         
-           /* display: flex; */
-           /* justify-content: center; */
-          
-           width: 100% !important;
-         
-          
-           
-           
-        } 
  } 
+

@@ -58,7 +58,7 @@ import { useNavigate } from "react-router-dom";
 
 import { GlobalContext } from "../Context/context";
 import { message } from 'antd';
-import { Console } from 'console';
+import { Console, log } from 'console';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 export const Chat = ({ user }: { user: User }) => {
 
@@ -74,6 +74,7 @@ export const Chat = ({ user }: { user: User }) => {
 
   // console.log(hellow.GlobalContext.token);
   const navigate = useNavigate();
+  const [isScrollbarActive, setIsScrollbarActive] = useState(false);
   // const [isLiked, setIsLiked] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredChannels, setFilteredChannels] = useState([]);
@@ -139,6 +140,9 @@ export const Chat = ({ user }: { user: User }) => {
   }
   
   const handleConversationClick = useCallback(async (channelId) => {
+    setIsScrollbarActive(true)
+    console.log('dddd');
+    
     setSelectedChats(true)
     setLoading(true);
     setNotificationChannelId(channelId)
@@ -232,6 +236,14 @@ export const Chat = ({ user }: { user: User }) => {
     setLoading(false);
 
   }
+
+// let  element = document.querySelector('#addClass');
+
+// // Step 2: Attach an event listener
+// element.addEventListener('click', function() {
+//   // Step 3: Add the class
+//   element.classList.add('ps--active-x');
+// });
 
  
   
@@ -446,7 +458,7 @@ export const Chat = ({ user }: { user: User }) => {
       }}
     >
       <MainContainer responsive className="border-0  main-container">
-        <Sidebar position="left" scrollable={true} style={sidebarStyle} className='sidebar'>
+        <Sidebar position="left" scrollable={true} style={sidebarStyle} className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${isScrollbarActive ? 'ps--active-x' : 'ps ps--active-xx'}`}>
           {/* <NavbarChat /> */}
           <div
             style={{
@@ -508,6 +520,7 @@ export const Chat = ({ user }: { user: User }) => {
 
 
           {/* side bar */}
+          <div>
 
           <ConversationList className='conversationList'>
             {/* Search Input */}
@@ -521,7 +534,7 @@ export const Chat = ({ user }: { user: User }) => {
                value={searchQuery}
                onChange={(e) => setSearchQuery(e.target.value)} />
              */}
-               <Search
+               <Search  className="searchInput" 
   placeholder="Search Channels..."
   value={searchQuery}
   onChange={(value: any) => setSearchQuery(value)}
@@ -536,7 +549,7 @@ export const Chat = ({ user }: { user: User }) => {
                c.channel_details[0].name.toLowerCase().includes(searchQuery.toLowerCase()))
             .map((c: any) => {
 
-              console.log("c", c)
+            
 
 
               // const [avatar, name] = (() => {
@@ -557,7 +570,10 @@ export const Chat = ({ user }: { user: User }) => {
               //   return [undefined, undefined];
               // })();
               return (
-                <Conversation className='conversations'
+                <Conversation  
+                // className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${
+                //   isScrollbarActive ? 'ps--active-x' : ''
+                // }`}
                   key={c.id} // Add a unique key prop for each conversation
                   unreadCnt={c.unreadCounter}
                   active={activeConversation?.id === c.id}
@@ -565,7 +581,7 @@ export const Chat = ({ user }: { user: User }) => {
                 
                   
                 >
-                  <Conversation.Content className='conversationsContent'
+                  <Conversation.Content className='conversationsContent' id=''
                     name={c.channel_details[0].name}
                     //  name={'name'}
                     style={conversationContentStyle}
@@ -579,6 +595,7 @@ export const Chat = ({ user }: { user: User }) => {
               );
             })}
           </ConversationList>
+          </div>
 
         </Sidebar>
 
