@@ -76,6 +76,13 @@ export const Chat = ({ user }: { user: User }) => {
     const storedState = localStorage.getItem('bellState');
     return storedState ? JSON.parse(storedState) : true;
   });
+
+  const [notificationState, setNotificationState] = useState(() => {
+    const storedState = localStorage.getItem('notificationState');
+    return storedState ? JSON.parse(storedState) : {};
+  });
+
+
    const [notification, setNotification] = useState("disable");
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [userMessages, setUserMessages] = useState([]);
@@ -155,22 +162,51 @@ export const Chat = ({ user }: { user: User }) => {
   }, [sidebarVisible, setSidebarVisible]);
   
 
-  const handleLikeClick = () => {
+  // const handleLikeClick = () => {
   
   
-    const updatedState = !isBellEnabled;
-    setIsBellEnabled(updatedState);
-    localStorage.setItem('bellState', JSON.stringify(updatedState));
-    if(notification== "disable"){   
-      setNotification("enable")
-    }
-    else  setNotification("disable")
-    console.log("notoi", notification )
+  //   const updatedState = !isBellEnabled;
+  //   setIsBellEnabled(updatedState);
+  //   localStorage.setItem('bellState', JSON.stringify(updatedState));
+  //   if(notification== "disable"){   
+  //     setNotification("enable")
+  //   }
+  //   else  setNotification("disable")
+  //   console.log("notoi", notification )
 
 
-    sendNotification()
+  //   sendNotification()
+  // };
+
+
+  
+  const handleLikeClick = async (channelId :any) => {
+    const updatedState = { ...notificationState };
+    updatedState[channelId] = !updatedState[channelId];
+    setNotificationState(updatedState);
+    localStorage.setItem('notificationState', JSON.stringify(updatedState));
+    sendNotification(channelId, updatedState[channelId]);
   };
+  const sendNotification = async (channelId :any, enable :any) => {
+    try {
+      const response = await axios.put(
+        'https://cloud1.sty-server.com/api/notification/setting',
+        {
+          channel_id: channelId,
+          setting: enable ? 'enable' : 'disable'
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user_Token}`
+          }
+        }
+      );
 
+      // Handle the response as needed
+    } catch (error) {
+      console.log('Error sending notification:', error);
+    }
+  };
   const getChannels = async () => {
 
     setLoading(true);
@@ -192,51 +228,30 @@ export const Chat = ({ user }: { user: User }) => {
 
   }
 
-  const searchChannels = async () => {
-
-
-    try {
-      let response = await axios.put(`https://cloud1.sty-server.com/api/channel/search`, {
-        channel_name: searchTerm
-      })
-
-      // setUserChannel(response?.data?.data)
-      //  setActiveName(response?.data?.data.channel_details[0].name)
-      
-            console.log("search Term ", searchTerm)
-
-
-    } catch (error) {
-      console.log("axios error: ", error);
-
-
-    }
-
-  }
-
+ 
   
-  const sendNotification = async () => {
-    try {
-      const response = await axios.put(
-        "https://cloud1.sty-server.com/api/notification/setting",
+  // const sendNotification = async () => {
+  //   try {
+  //     const response = await axios.put(
+  //       "https://cloud1.sty-server.com/api/notification/setting",
        
 
-        data, headers1
-          // params: {
-          //     channel_id: notificationChannelId,
-          //      setting: notification
-          // },
-          // headers: {
-          //   Authorization: `Bearer ${user_Token}`,
-          // }
+  //       data, headers1
+  //         // params: {
+  //         //     channel_id: notificationChannelId,
+  //         //      setting: notification
+  //         // },
+  //         // headers: {
+  //         //   Authorization: `Bearer ${user_Token}`,
+  //         // }
        
-      );
+  //     );
     
 
-    } catch (error) {
-      console.log("Error fetching messages:", error);
-    }
-  };
+  //   } catch (error) {
+  //     console.log("Error fetching messages:", error);
+  //   }
+  // };
 
   // useEffect(() => {
   //   if(activeName){
@@ -574,9 +589,10 @@ export const Chat = ({ user }: { user: User }) => {
 
    <ConversationHeader.Actions>
      {/* <SwipeableTemporaryDrawer /> */}
-     <div onClick={handleLikeClick}>
+     <div onClick={() => handleLikeClick(notificationChannelId)}>
 
-{isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>}
+{/* {isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>} */}
+{notificationState[notificationChannelId] ? <NotificationsActiveOutlinedIcon /> : <NotificationsOffIcon />}
 </div>
    </ConversationHeader.Actions>
  </ConversationHeader>
@@ -649,7 +665,7 @@ export const Chat = ({ user }: { user: User }) => {
 <Message
   model={{
     type: g.content_type === "html" ? "html" : "text",
-    message: g.content_type === "html" ? `<a href="${g.link}">${g.link}</a>` : g.content,
+    message: g.content_type === "html" ? `<a href="${g.link}" target=_blank>${g.link}</a>` : g.content,
     sentTime: "15 mins ago",
     sender: "Zoe",
     direction: "incoming",
