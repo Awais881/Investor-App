@@ -17,6 +17,7 @@ import {
   ConversationList,
   Conversation,
   Avatar,
+  Search,
   ChatContainer,
   ConversationHeader,
   MessageGroup,
@@ -511,12 +512,22 @@ export const Chat = ({ user }: { user: User }) => {
           <ConversationList className='conversationList'>
             {/* Search Input */}
             <div className="searchContainer">
-              {/* <form onSubmit={searchChannels}> */}
-              <input type="text" className="searchInput" 
+
+              {/* <input type="text" className="searchInput" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Channels"  />
-              {/* </form> */}
+              placeholder="Search Channels"  /> */}
+              {/* <Search placeholder="Search Channels..."
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)} />
+             */}
+               <Search
+  placeholder="Search Channels..."
+  value={searchQuery}
+  onChange={(value: any) => setSearchQuery(value)}
+/>
+
+
             </div>
 
             {/* Conversation List */}
