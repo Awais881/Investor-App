@@ -716,20 +716,19 @@ export const Chat = ({ user }: { user: User }) => {
           </MessageSeparator>
         )}
 
-        <Message className='messages'
-          model={{
-            type: g.content_type === 'html' ? 'html' : 'text',
-            message: g.content_type === 'html' ? `<a href="${g.link}" target="_blank">${g.link}</a>` : g.content,
-            sentTime: `<MessageTime time={moment(g.created_at).format('hh:mm A')} />`,
-            direction: 'incoming',
-            position: 'single',
-          }}
-        />
-          <MessageTime time={moment(g.created_at).format('hh:mm A')} />
-      </React.Fragment>
-    );
-  })}
-</MessageList>
+            <Message
+              model={{
+                type: g.content_type === 'html' ? 'html' : 'text',
+                message: g.content_type === 'html' ? `<a href="${g.link}" target="_blank">${g.link}</a>` : g.content,
+                sentTime: moment(g.created_at).fromNow(),
+                direction: 'incoming',
+                position: 'single',
+              }}
+            />
+          </React.Fragment>
+        );
+      })}
+    </MessageList>
 
 
 
