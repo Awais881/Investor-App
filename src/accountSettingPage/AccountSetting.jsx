@@ -9,8 +9,10 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { GlobalContext } from '../Context/context';
+import { Link } from "react-router-dom";
 import  Loader  from '../assets/loader.gif';
 import { notification } from 'antd';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const useStyles = makeStyles((theme) => ({
   form: {
     display: 'flex',
@@ -186,6 +188,10 @@ const Form = () => {
   return (
     <div className='HA_main_div'>
       <div className='HA_img mb-none'>
+        <div className='back-button'>
+        <Link to={`/`}> <ArrowBackIcon/> </Link>
+  
+        </div>
         <img className='HA_main_image_div' src={image} alt="" />
 
       </div>
@@ -193,6 +199,7 @@ const Form = () => {
       {/* <div className='HA_card_main'> */}
       <div className='HA_card_main_div'>
         <div className='HA_card_text_heading'>
+        <p className='back-mobile'> <Link to={`/`}> <ArrowBackIcon color="success"/> </Link></p>
           <p className='HA_card_headind_text_stn'>Account Details</p>
         </div>
 
@@ -212,7 +219,7 @@ const Form = () => {
               inputProps={{
              readOnly: true,
                }}
-            />
+               disabled   />
 
             <TextField
               className="formfields disableInput"
@@ -228,7 +235,7 @@ const Form = () => {
               inputProps={{
                 readOnly: true,
                   }}
-            />
+                  disabled />
 
             <div className='HA_reset_heading_main'>
               <p className='HA_reser_heading_text'>Reset Your Password</p>
@@ -247,7 +254,7 @@ const Form = () => {
               InputLabelProps={{
                 shrink: true,
               }}
-            />
+             />
             <TextField
               className="formfields"
               label="Confirm Password"

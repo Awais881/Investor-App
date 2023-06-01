@@ -1,5 +1,6 @@
 import './chat.css'
 import React from 'react';
+import { Link } from "react-router-dom";
 import Loader from '../assets/Rolling-1s-200px.gif'
 import moment from 'moment';
 import welcome from '../assets/welcome.svg'
@@ -444,6 +445,7 @@ export const Chat = ({ user }: { user: User }) => {
   };
 
   const AccountSetting = () => {
+
     navigate("/account-setting");
   };
 
@@ -508,7 +510,8 @@ export const Chat = ({ user }: { user: User }) => {
 
               <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <li className="dropdown-item" onClick={AccountSetting}>
-                  Account Setting
+                Account Setting 
+                {/* <Link to={`/account-setting`}>  Account Setting </Link> */}
                 </li>
                 <li
                   className="dropdown-item"
@@ -584,7 +587,9 @@ export const Chat = ({ user }: { user: User }) => {
                   key={c.id} // Add a unique key prop for each conversation
                   unreadCnt={c.unreadCounter}
                   active={activeConversation?.id === c.id}
-                  onClick={() => handleConversationClick( c.channel_id)}
+                  onClick={() => {handleConversationClick( c.channel_id)
+                    setActiveName(c.channel_details[0].name) 
+                  }}
                 
                   
                 >
@@ -613,7 +618,8 @@ export const Chat = ({ user }: { user: User }) => {
 
 <div className='loader' >
 
-<img width={50} src={Loader} alt="loading" />
+<img height={50} src={Loader} alt="loading" />
+
 </div>}
 
    {!loading && (

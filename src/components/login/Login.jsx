@@ -129,7 +129,7 @@ let { state, dispatch } = useContext(GlobalContext);
       const response = await axios.post(login_URL, 
         { email, password }
         );
-
+      
       console.log("response", response?.data);
       
      
@@ -141,22 +141,25 @@ let { state, dispatch } = useContext(GlobalContext);
         const user_token = response?.data?.data?.token;
         const user_id = response?.data?.data?.user?.id;
 
+
         localStorage.setItem("token", user_token);
         // localStorage.setItem("email", user_email);
         localStorage.setItem("user_ID", user_id);
-        dispatch({
-          type: 'USER_LOGIN',
-          payload: response.data.user
-          //  token: response?.data?.data?.token,
-      
-      })
+        if (response.data.status === 200 ) {   
+        
+          dispatch({
+            type: 'USER_LOGIN',
+            payload: response.data.user
+            //  token: response?.data?.data?.token,
+        
+        })
 
        
 
       
-      if (response?.data?.status === 200 ) {
-
-        console.log("Login Success" );
+    
+        console.log("user", )
+        // console.log("Login Success" );
 
         Toast.fire({
           icon: 'success',
