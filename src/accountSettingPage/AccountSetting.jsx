@@ -12,6 +12,7 @@ import { GlobalContext } from '../Context/context';
 import { Link } from "react-router-dom";
 import  Loader  from '../assets/loader.gif';
 import { notification } from 'antd';
+
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -32,13 +33,15 @@ const Form = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
+  // const [matched, setmatched] = useState({});
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   // const [userAccountData, setUserAccountData] = useState(null);
   let { state, dispatch } = useContext(GlobalContext);
   // console.log('userAccountData', userAccountData)
 
+  
 
-
+  
   // setName(state.user.name)
   // setEmail (state.user.email)
   useEffect(() => {
@@ -125,6 +128,7 @@ const Form = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = {};
+    // const validationMatch = {};
 
     const data = {
       password: password,
@@ -144,8 +148,8 @@ const Form = () => {
 
     if (!password) {
       validationErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      validationErrors.password = 'Password must be at least 6 characters long';
+    } else if (password.length < 8 ) {
+      validationErrors.password = 'Password must be at least 8 characters long';
     }
 
     if (!confirmPassword) {
@@ -153,7 +157,12 @@ const Form = () => {
     } else if (confirmPassword !== password) {
       validationErrors.confirmPassword = 'Passwords do not match';
     }
-
+    // if (password === confirmPassword) {
+    //   validationMatch.confirmPassword = 'matched';
+    // } 
+    // if (Object.keys(validationMatch).length > 0) {
+    //   setmatched(validationMatch);
+    // } 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
@@ -168,12 +177,16 @@ const Form = () => {
           if (response?.data?.status == 200) {
             Toast.fire({
               icon: 'success',
-              title: `Password updated successfully`
+              title: response.data.message
             })
-            // navigate("/")
+            navigate("/")
           }
         })
         .catch(function (error) {
+          Toast.fire({
+            icon: 'error',
+            title: error.response.data.message
+          })
           console.error(error);
         });
     }
@@ -238,11 +251,11 @@ const Form = () => {
                   disabled />
 
             <div className='HA_reset_heading_main'>
-              <p className='HA_reser_heading_text'>Reset Your Password</p>
+              <p className='HA_reser_heading_text'>Upadte Your Password</p>
             </div>
             <TextField
               className="formfields "
-              label="Password"
+              label="New Pasword"
               type="password"
               value={password}
               onChange={(event) => {
@@ -266,6 +279,7 @@ const Form = () => {
               }}
               error={!!errors.confirmPassword}
               helperText={errors.confirmPassword}
+              
               InputLabelProps={{
                 shrink: true,
               }}

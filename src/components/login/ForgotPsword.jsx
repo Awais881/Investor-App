@@ -11,12 +11,12 @@ import { InputAdornment } from '@material-ui/core';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Spinner from 'react-spinner-material';
-
+import { useNavigate } from "react-router-dom";
 
 const ForgotPsword = () => {
   const hellow = useContext(UserContext)
   
-
+  const navigate = useNavigate();
 
 
 
@@ -63,6 +63,7 @@ const ForgotPsword = () => {
             icon: 'error',
             title: `${response.data.message}`
           })
+        
           setEmail("");
           setLoader(false);
         } else {
@@ -70,6 +71,7 @@ const ForgotPsword = () => {
             icon: 'success',
             title: `${response.data.message}`
           })
+          navigate("/");
           setEmail("");
           setLoader(false);
         }

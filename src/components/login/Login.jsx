@@ -112,8 +112,8 @@ let { state, dispatch } = useContext(GlobalContext);
 
     if (!password) {
       validationErrors.password = "Password is required";
-    } else if (password.length < 6) {
-      validationErrors.password = "Password must be at least 6 characters long";
+    } else if (password.length < 8) {
+      validationErrors.password = "Password must be at least 8 characters long";
     }
 
     if (Object.keys(validationErrors).length > 0) {
@@ -171,7 +171,7 @@ let { state, dispatch } = useContext(GlobalContext);
   catch (error) {
     Toast.fire({
       icon: 'error',
-      title: "Invalid Login Credentials"
+      title: error.response.data.message
     })
       dispatch({
         type: 'USER_LOGOUT'
