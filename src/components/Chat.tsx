@@ -287,7 +287,9 @@ export const Chat = ({ user }: { user: User }) => {
     console.log("user message details: ", messages);
   }, [userChannel, messages]);
 
-
+  const MessageTime = ({ time }:any) => {
+    return <span className="message-time">{time}</span>;
+  };
   useEffect(() => {
     getChannels();
     // getMessages();
@@ -331,7 +333,7 @@ export const Chat = ({ user }: { user: User }) => {
     setActiveConversation,
     sendMessage,
     getUser,
-    currentMessage,
+   currentMessage,
     setCurrentMessage,
     sendTyping,
     setCurrentUser,
@@ -464,7 +466,7 @@ export const Chat = ({ user }: { user: User }) => {
       }}
     >
       <MainContainer responsive className="border-0  main-container">
-        <Sidebar position="left" scrollable={true} style={sidebarStyle} className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${isScrollbarActive ? 'ps--active-x' : 'sidebar'}`}>
+        <Sidebar position="left" scrollable={true} style={sidebarStyle} id='side-bar' className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${isScrollbarActive ? 'ps--active-x' : 'sidebar'}`}>
           {/* <NavbarChat /> */}
           <div
             style={{
@@ -475,7 +477,7 @@ export const Chat = ({ user }: { user: User }) => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              background: "#F0F2F5"
+             
             }}
           >
             <div
@@ -485,7 +487,7 @@ export const Chat = ({ user }: { user: User }) => {
                 
               }}
             >
-              <div
+              <div 
                 style={{
                   marginLeft: 30,
                   fontSize: 25,
@@ -496,6 +498,7 @@ export const Chat = ({ user }: { user: User }) => {
               >
                 Channels
               </div>
+          
             </div>
             <div className="dropdown">
               <MoreHorizIcon
@@ -530,7 +533,7 @@ export const Chat = ({ user }: { user: User }) => {
 
 
           {/* side bar */}
-        
+        <hr />
 
           <ConversationList className='conversationList'>
             {/* Search Input */}
@@ -623,11 +626,11 @@ export const Chat = ({ user }: { user: User }) => {
 </div>}
 
    {!loading && (
-<ChatContainer style={chatContainerStyle}>
+<ChatContainer style={chatContainerStyle} className='chat-container'>
  <ConversationHeader>
    <ConversationHeader.Back onClick={handleBackClick} />
      
-   <ConversationHeader.Content
+   <ConversationHeader.Content className='activeName'
      userName={activeName}
    // info="Active 10 mins ago"
    />
@@ -691,33 +694,38 @@ export const Chat = ({ user }: { user: User }) => {
  </MessageList>  */}
 
 
-<MessageList>
-      {messages.map((g:any) => {
-        const currentDate = moment(g.created_at).format('dddd');
-        const showDateSeparator = currentDate !== previousDate;
-        previousDate = currentDate;
 
-        return (
-          <React.Fragment key={g.id}>
-            {showDateSeparator && (
-              <MessageSeparator>
-                {moment(g.created_at).format('dddd')}
-              </MessageSeparator>
-            )}
 
-            <Message
-              model={{
-                type: g.content_type === 'html' ? 'html' : 'text',
-                message: g.content_type === 'html' ? `<a href="${g.link}" target="_blank">${g.link}</a>` : g.content,
-                sentTime: moment(g.created_at).fromNow(),
-                direction: 'incoming',
-                position: 'single',
-              }}
-            />
-          </React.Fragment>
-        );
-      })}
-    </MessageList>
+<MessageList className='messagesList'>
+  {messages.map((g:any, index:number) => {
+    const currentDate = moment(g.created_at).format('D/M/YY');
+    const previousDate = index > 0 ? moment(messages[index - 1].created_at).format('D/M/YY') : null;
+    const showDateSeparator = currentDate !== previousDate;
+
+    return (
+      <React.Fragment key={g.id}>
+        {showDateSeparator && (
+          <MessageSeparator className="date-separator">
+            {currentDate}
+          </MessageSeparator>
+        )}
+
+        <Message className='messages'
+          model={{
+            type: g.content_type === 'html' ? 'html' : 'text',
+            message: g.content_type === 'html' ? `<a href="${g.link}" target="_blank">${g.link}</a>` : g.content,
+            sentTime: moment(g.created_at).format('hh:mm A'),
+            direction: 'incoming',
+            position: 'single',
+          }}
+        />
+          <MessageTime time={moment(g.created_at).format('hh:mm A')} />
+      </React.Fragment>
+    );
+  })}
+</MessageList>
+
+
 
 
  {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
