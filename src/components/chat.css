@@ -8,7 +8,7 @@
 border-radius: 12px;
 }
 .conversations{
-   margin-top: 0px;
+   
    
 }
 .conversations{
@@ -92,9 +92,16 @@ padding: 10px !important;
   }
   
   .scrollbar-container{
-    height: 100vh;
+    /* height: 100vh; */
   }
-  
+  .account-setting{
+    text-decoration: none;
+    color: black;
+  }
+  .message-time{
+   float: right;
+   font-size: 11px;
+  }
  @media only screen and (max-width: 768px) { 
     .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps {
          

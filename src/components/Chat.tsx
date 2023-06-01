@@ -58,6 +58,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 import { useNavigate } from "react-router-dom";
 
+
 import { GlobalContext } from "../Context/context";
 import { message } from 'antd';
 import { Console, log } from 'console';
@@ -475,8 +476,9 @@ export const Chat = ({ user }: { user: User }) => {
           {/* <NavbarChat /> */}
           <div
             style={{
-              //   borderBottom: "1px solid #cedbe3",
-              //   paddingLeft: 15,
+                borderBottom: "1px solid #cedbe3",
+               
+                paddingLeft: 15,
               paddingRight: 10,
               height: 74,
               display: "flex",
@@ -517,10 +519,11 @@ export const Chat = ({ user }: { user: User }) => {
               />
 
               <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li className="dropdown-item" >
-                <Link to={`/account-setting`}>Account Setting</Link>
-              
-               
+                <li className="dropdown-item" onClick={AccountSetting}>
+
+                <Link to={`/account-setting`} className='account-setting'>Account Setting</Link>
+            
+          
                 </li>
                 <li
                   className="dropdown-item"
@@ -534,12 +537,14 @@ export const Chat = ({ user }: { user: User }) => {
                   {/* <LogoutIcon /> */}
                 </li>
               </ul>
+             
             </div>
           </div>
+      
 
-
+        
           {/* side bar */}
-        <hr />
+     
 
           <ConversationList className='conversationList'>
             {/* Search Input */}
@@ -702,7 +707,7 @@ export const Chat = ({ user }: { user: User }) => {
 
 
 
-<MessageList className='messagesList'>
+{/* <MessageList className='messagesList'>
   {messages.map((g:any, index:number) => {
     const currentDate = moment(g.created_at).format('D/M/YY');
     const previousDate = index > 0 ? moment(messages[index - 1].created_at).format('D/M/YY') : null;
@@ -715,6 +720,7 @@ export const Chat = ({ user }: { user: User }) => {
             {currentDate}
           </MessageSeparator>
         )}
+     
 
         <Message className='messages'
           model={{
@@ -724,12 +730,97 @@ export const Chat = ({ user }: { user: User }) => {
             direction: 'incoming',
             position: 'single',
           }}
-        />
-          <MessageTime time={moment(g.created_at).format('hh:mm A')} />
+       />
+            
+ 
+          
+
+          <MessageTime time={moment(g.created_at).format('hh:mm A')} /> 
+      </React.Fragment>
+    );
+  })}
+</MessageList> */}
+
+ 
+
+
+{/* <MessageList className="messagesList">
+  {messages.map((g: any, index: number) => {
+    const currentDate = moment(g.created_at).format("D/M/YY");
+    const previousDate =
+      index > 0 ? moment(messages[index - 1].created_at).format("D/M/YY") : null;
+    const showDateSeparator = currentDate !== previousDate;
+
+    return (
+      <React.Fragment key={g.id}>
+        {showDateSeparator && (
+          <MessageSeparator className="date-separator">
+            {currentDate}
+          </MessageSeparator>
+        )}
+
+        <Message className="messages"
+          model={{
+            type: g.content_type === 'html' ? 'html' : 'text',
+            message: g.content_type === 'html' ? `<a href="${g.link}" target="_blank">${g.link}</a>` : g.content,
+            sentTime: `<MessageTime time={moment(g.created_at).format('hh:mm A')} />`,
+            direction: 'incoming',
+            position: 'single',
+          }}
+        >
+          <Message.HtmlContent
+            html={`${g.content}<br /><span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
+          />
+        </Message>
+      </React.Fragment>
+    );
+  })}
+</MessageList> */}
+
+
+<MessageList className="messagesList">
+  {messages.map((g: any, index: number) => {
+    const currentDate = moment(g.created_at).format("D/M/YY");
+    const previousDate =
+      index > 0 ? moment(messages[index - 1].created_at).format("D/M/YY") : null;
+    const showDateSeparator = currentDate !== previousDate;
+
+    return (
+      <React.Fragment key={g.id}>
+        {showDateSeparator && (
+          <MessageSeparator className="date-separator">
+            {currentDate}
+          </MessageSeparator>
+        )}
+
+        <Message
+          className="messages"
+          model={{
+            type: g.content_type === "html" ? "html" : "text",
+            message:
+              g.content_type === "html"
+                ? `<a href="${g.link}" target="_blank">${g.link}</a>`
+                : g.content,
+
+            direction: "incoming",
+            position: "single",
+          }}
+        >
+          <Message.HtmlContent
+            html={`${
+              g.content_type === "html" ? 
+              `<a href="${g.link}" target="_blank">${g.link}</a><br>` 
+              : 
+              `${g.content}`
+            } <span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
+          />
+          
+        </Message>
       </React.Fragment>
     );
   })}
 </MessageList>
+
 
 
 
