@@ -65,7 +65,36 @@ border-radius: 12px;
 .dropdown-item{
     cursor: pointer;
 }
-     
+.cs-message__content{
+  margin: 5px;
+    background: #F8FCFF !important;
+box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1) !important;
+border-radius: 18px !important;
+
+padding: 10px !important;
+}
+.chat-container{
+  
+    background: #FFFFFF !important;
+}
+/* .message-time{
+  display: flex;
+  justify-content: space-between;
+} */
+.date-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #555;
+    text-transform: uppercase;
+  }
+  
+  .scrollbar-container{
+    height: 100vh;
+  }
+  
  @media only screen and (max-width: 768px) { 
     .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps {
          
@@ -89,11 +118,5 @@ border-radius: 12px;
    .image{
     display: none;
    }
-     .loader {
-   
-     }
-      .loader img{
-      
-      }
+    
     }  
-   
