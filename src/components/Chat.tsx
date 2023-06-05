@@ -751,7 +751,7 @@ export const Chat = ({ user }: { user: User }) => {
                       </MessageSeparator>
                     )}
 
-                    <Message
+                    {/* <Message
                       className="messages"
                       model={{
                         // type: g.content_type === "html" ? "html" : "text",
@@ -764,25 +764,14 @@ export const Chat = ({ user }: { user: User }) => {
                         position: "single",
                       }}
                     >
-                      {/* <Message.HtmlContent
-            html={`${
-              g.content_type === "html" ? 
-              // `<a href="${g.link}" target="_blank">${g.link}</a><br>` 
-              // <Link to={"/m/"+g.id+"}> {g.link} </Link>
-
-              `<Link>${g.link}</Link>`
-              : 
-              `${g.content}`
-            } <br/><span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
-          />
-           */}
+            
    
 
                       {g.content_type === "html" ? (
                         <Message.HtmlContent
                           html={`<a href="/m/${encryptId(g.id)}">${
                             g.link  
-                          }<a><br><span class="message-time">${moment(
+                          }</a><span class="message-time">${moment(
                             g.created_at
                           ).format("hh:mm A")}</span>`}
                         ></Message.HtmlContent>
@@ -790,13 +779,39 @@ export const Chat = ({ user }: { user: User }) => {
                         <Message.HtmlContent
                         html={`${g.content}
                           
-                        <a><br><span class="message-time">${moment(
+                        <span class="message-time">${moment(
                           g.created_at
                         ).format("hh:mm A")}</span>`}
                       ></Message.HtmlContent>
 
                       )}
-                    </Message>
+                    </Message> */}
+
+<Message
+  className="messages"
+  model={{
+    direction: "incoming",
+    position: "single",
+  }}
+>
+  {g.content_type === "html" ? (
+    <Message.HtmlContent
+      html={`<a href="/m/${encryptId(g.id)}">
+      ${g.link}</a> <span class="message-time">
+      ${moment(g.created_at).format("hh:mm A")}
+      </span>`}
+    ></Message.HtmlContent>
+  ) : (
+    <Message.HtmlContent
+      html={`${g.content}  <span class="message-time">
+      ${moment(g.created_at).format("hh:mm A")}
+      </span>`}
+    ></Message.HtmlContent>
+  )}
+</Message>
+
+
+
                   </React.Fragment>
                 );
               })}
