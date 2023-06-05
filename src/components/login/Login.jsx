@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import Swal from 'sweetalert2'
+import { ToastContainer, toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 import axios from "axios";
 // import $ from "jquery";
@@ -19,8 +19,8 @@ import { InputAdornment } from "@material-ui/core";
 import UserContext from "../../Context/context";
 // import { baseURl } from "../../constants";
 
-import { GlobalContext } from '../../Context/context'
-import  Loader   from "../../assets/loader.gif";
+import { GlobalContext } from "../../Context/context";
+import Loader from "../../assets/loader.gif";
 // import React from "react";
 // import Swal from "sweetalert2";
 // import Swal from "sweetalert2";
@@ -31,25 +31,24 @@ const LoginPage = () => {
   // const user = useContext(UserContext);
 
   const navigate = useNavigate();
-let { state, dispatch } = useContext(GlobalContext);
+  let { state, dispatch } = useContext(GlobalContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   // console.log("user_Token", user_Token);
 
-
   const Toast = Swal.mixin({
     toast: true,
-    position: 'top-right',
-    iconColor: 'white',
+    position: "top-right",
+    iconColor: "white",
     customClass: {
-      popup: 'colored-toast'
+      popup: "colored-toast",
     },
     showConfirmButton: false,
     timer: 2000,
-    timerProgressBar: true
-  })
+    timerProgressBar: true,
+  });
   // useEffect(() => {
   //   // Check if the user is already authenticated
   //   if (user_Token) {
@@ -64,7 +63,6 @@ let { state, dispatch } = useContext(GlobalContext);
   //   }
 
   // }, [user_Token, navigate]);
-
 
   // Toaster messages function
   // const Toast = Swal.mixin({
@@ -99,11 +97,13 @@ let { state, dispatch } = useContext(GlobalContext);
   //   });
   // };
 
+
+   
   //Login Function
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validationErrors = {};
-
+  
     if (!email) {
       validationErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
@@ -126,63 +126,49 @@ let { state, dispatch } = useContext(GlobalContext);
     try {
       const login_URL = `${state.baseUrl}api/login`;
 
-      const response = await axios.post(login_URL, 
-        { email, password }
-        );
-      
+      const response = await axios.post(login_URL, { email, password });
+
       console.log("response", response?.data);
-      
-     
-       
+      // let data={data: response?.data}
+      //Data save to local storage
 
-        //Data save to local storage
-       
-        // const user_email = response?.data?.data?.user?.email;
-        const user_token = response?.data?.data?.token;
-        const user_id = response?.data?.data?.user?.id;
+      // const user_email = response?.data?.data?.user?.email;
+      const user_token = response?.data?.data?.token;
+      const user_id = response?.data?.data?.user?.id;
 
+      localStorage.setItem("token", user_token);
+      // localStorage.setItem("email", user_email);
+      localStorage.setItem("user_ID", user_id);
+      if (response.data.status === 200) {
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(user_id);
+        }
+        // console.log("response", data);
+        dispatch({
+          type: "USER_LOGIN",
+          payload: response.data.user,
+          //  token: response?.data?.data?.token,
+        });
 
-        localStorage.setItem("token", user_token);
-        // localStorage.setItem("email", user_email);
-        localStorage.setItem("user_ID", user_id);
-        if (response.data.status === 200 ) {   
-        
-          dispatch({
-            type: 'USER_LOGIN',
-            payload: response.data.user
-            //  token: response?.data?.data?.token,
-        
-        })
-
-       
-
-      
-    
-        console.log("user", )
+        console.log("user");
         // console.log("Login Success" );
 
         Toast.fire({
-          icon: 'success',
-          title: response.data.message
-        })
-      
-    } 
-  }
-  catch (error) {
-    Toast.fire({
-      icon: 'error',
-      title: error.response.data.message
-    })
+          icon: "success",
+          title: response.data.message,
+        });
+      }
+    } catch (error) {
+      Toast.fire({
+        icon: "error",
+        title: error.response.data.message,
+      });
       dispatch({
-        type: 'USER_LOGOUT'
+        type: "USER_LOGOUT",
         //  token: response?.data?.data?.token,
-    
-    })
+      });
 
       // console.log("Error_________________________", error);
-
-      
-     
     }
   };
 

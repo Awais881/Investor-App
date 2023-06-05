@@ -24,7 +24,7 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer>
+{/* <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer>
 
 
   
@@ -36,6 +36,16 @@ ReactDOM.render(
   });
   console.log("Hello");
   
+</script> */}
+
+
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "2924c1c9-91a4-48b0-8851-284509bcf848",
+    })
+  });
 </script>
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

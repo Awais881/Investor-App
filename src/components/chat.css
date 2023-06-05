@@ -3,7 +3,7 @@
     margin-top: 5px;
     width: 100%;
 }
-.conversations:hover{
+.conversations:active{
     background: #FFFFFF !important;
 border-radius: 12px;
 }
@@ -101,6 +101,12 @@ padding: 10px !important;
   .message-time{
    float: right;
    font-size: 11px;
+  }
+  .active{
+    background-color: white;
+  }
+  .active:hover{
+    background-color: white;
   }
  @media only screen and (max-width: 768px) { 
     .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps {

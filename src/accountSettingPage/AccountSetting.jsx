@@ -26,7 +26,10 @@ const Form = () => {
 
   const classes = useStyles();
   const [checked, setChecked] = React.useState(true);
-  const [notification, setNotification] = React.useState("enable");
+  // const [notification, setNotification] = React.useState("enable");
+  const [notification, setNotification] = React.useState(
+    localStorage.getItem("notification") === "enable"
+  );
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -76,42 +79,7 @@ const Form = () => {
       });
   };
 
-  // const headers = {
-  //     headers: {
-  //       Authorization: `Bearer ${user_Token}`,
-  //     },
-  //   };
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     try {
-  //       const response = await axios.get(`https://cloud1.sty-server.com/api/user`, headers);
-  //       if (response?.data?.status === 200) {
-  //         dispatch({
-  //           type: 'USER_LOGIN',
-  //           payload: response.data
-  //         });
-  //       }
-  //     } catch (error) {
-  //       dispatch({
-  //         type: 'USER_LOGOUT',
-  //       });
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   getUserData();
-  // }, []);
-
-  // if (!state.user || !state.user.email) {
-  //   // Render a loading state or return null until the email data is available
-  //   return (
-  //     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: '100vh' }}>
-  //       <img width={300} src={Loader} alt="loading" />
-  //     </div>
-  //   );
-  // }
-
-  //Toaster messages function
+  
   const Toast = Swal.mixin({
     toast: true,
     position: "top-right",
@@ -124,79 +92,130 @@ const Form = () => {
     timerProgressBar: true,
   });
 
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   const validationErrors = {};
+  
+
+  //   const data = {
+  //     password: password,
+  //     password_confirmation: confirmPassword,
+  //     notification: notification,
+  //   };
+
+  
+
+  //   if (!password) {
+  //     validationErrors.password = "Password is required";
+  //   } else if (password.length < 8) {
+  //     validationErrors.password = "Password must be at least 8 characters long";
+  //   }
+
+  //   if (!confirmPassword) {
+  //     validationErrors.confirmPassword = "Confirm password is required";
+  //   } else if (confirmPassword !== password) {
+  //     validationErrors.confirmPassword = "Passwords do not match";
+  //   }
+  
+  //   if (Object.keys(validationErrors).length > 0) {
+  //     setErrors(validationErrors);
+  //   } else {
+  //     // submit the form
+  //     console.log("Password:", password);
+  //     console.log("Confirm password:", confirmPassword);
+
+  //     axios
+  //       .put(`https://cloud1.sty-server.com/api/change/password`, data, headers)
+  //       .then(function (response) {
+  //         console.log(response);
+  //         if (response?.data?.status == 200) {
+  //           Toast.fire({
+  //             icon: "success",
+  //             title: response.data.message,
+  //           });
+  //           navigate("/");
+  //         }
+  //         if(response.status == 500){
+  //           Toast.fire({
+  //             icon: "error",
+  //             title: "Choose a New Password",
+  //           });
+  //         }
+  //       })
+  //       .catch(function (error) {
+         
+  //         Toast.fire({
+  //           icon: "error",
+  //           title: error.response.data.message,
+  //         });
+  //         console.error(error);
+  //       });
+  //   }
+  // };
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = {};
-    // const validationMatch = {};
-
-    const data = {
-      password: password,
-      password_confirmation: confirmPassword,
-      notification: notification,
-    };
-
-    // if (!name) {
-    //   validationErrors.name = 'Name is required';
-    // }
-
-    // if (!email) {
-    //   validationErrors.email = 'Email is required';
-    // } else if (!/\S+@\S+\.\S+/.test(email)) {
-    //   validationErrors.email = 'Invalid email format';
-    // }
-
-    if (!password) {
-      validationErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      validationErrors.password = "Password must be at least 8 characters long";
+  
+    // Validate password and confirmPassword fields if they are not empty
+    if (password.trim() !== '') {
+      if (password.length < 8) {
+        validationErrors.password = 'Password must be at least 8 characters long';
+      }
+  
+      if (confirmPassword.trim() !== '') {
+        if (confirmPassword !== password) {
+          validationErrors.confirmPassword = 'Passwords do not match';
+        }
+      }
     }
-
-    if (!confirmPassword) {
-      validationErrors.confirmPassword = "Confirm password is required";
-    } else if (confirmPassword !== password) {
-      validationErrors.confirmPassword = "Passwords do not match";
-    }
-    // if (password === confirmPassword) {
-    //   validationMatch.confirmPassword = 'matched';
-    // }
-    // if (Object.keys(validationMatch).length > 0) {
-    //   setmatched(validationMatch);
-    // }
+  
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
-      // submit the form
-      console.log("Password:", password);
-      console.log("Confirm password:", confirmPassword);
-
+      // Prepare data for API request
+      const data = {
+        password: password.trim() !== '' ? password : undefined,
+        password_confirmation: confirmPassword.trim() !== '' ? confirmPassword : undefined,
+        notification: notification ? 'enable' : 'disable',
+      };
+  
+      // Make the API request
       axios
         .put(`https://cloud1.sty-server.com/api/change/password`, data, headers)
         .then(function (response) {
-          console.log(response);
-          if (response?.data?.status == 200) {
+          if (response?.data?.status === 200) {
+            if (window.ReactNativeWebView) {
+              window.ReactNativeWebView.postMessage(checked ? "enable" : "disable");
+            }
+            
             Toast.fire({
-              icon: "success",
+              icon: 'success',
               title: response.data.message,
             });
-            navigate("/");
+            navigate('/');
           }
         })
         .catch(function (error) {
           Toast.fire({
-            icon: "error",
+            icon: 'error',
             title: error.response.data.message,
           });
           console.error(error);
         });
     }
   };
-
+  
   const handleChange = (event) => {
     setChecked(event.target.checked);
     setNotification("disable");
     console.log(checked);
+    console.log("noti", notification);
   };
-
+  const handleSwitchChange = (event) => {
+    const newNotificationValue = event.target.checked;
+    setNotification(newNotificationValue);
+    localStorage.setItem("notification", newNotificationValue ? "enable" : "disable");
+  };
   return (
     <div className="HA_main_div">
       <div className="HA_img mb-none">
@@ -298,9 +317,11 @@ const Form = () => {
                 Announcement Notification
               </p>
               <Switch
-                checked={checked}
-                onChange={handleChange}
-                inputProps={{ "aria-label": "controlled" }}
+                checked={notification}
+                onChange={handleSwitchChange}
+                color="primary"
+                name="notification"
+                inputProps={{ "aria-label": "notification checkbox" }}
               />
             </div>
             <Button

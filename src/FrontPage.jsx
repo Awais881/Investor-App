@@ -6,14 +6,20 @@ import LoginPage from './components/login/Login'
 import { GlobalContext } from './Context/context';
 import { Routes, Route, Link,  Navigate } from "react-router-dom"
 import ForgotPsword from './components/login/ForgotPsword'
+import ChatScreen from './components/chatscreen'
 // import UsersState from './Context/reducer';
 import AccountSetting from './accountSettingPage/AccountSetting'
 import { BrowserRouter } from 'react-router-dom';
+// import Crypto from 'crypto'
 // import 'react-toastify/dist/ReactToastify.css';
 const FrontPage = () => {
     // const navigate = useNavigate();
     let { state, dispatch } = useContext(GlobalContext);
  
+    //  var mykey = crypto.createCipher('aes-128-cbc', 'chatMessages');
+    //  var mystr = mykey.update('abc', 'utf8', 'hex')
+    // mystr += mykey.final('hex');
+
     const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
 
     
@@ -81,7 +87,7 @@ const FrontPage = () => {
              
                     <Routes>
                         <Route path="/" element={<App />} />
-
+                        <Route path='/m/:id' element={<ChatScreen />} />
                         <Route path="/account-setting" element={<AccountSetting />} />
                        
                         <Route path="*" element={<Navigate to="/" replace={true} />} />

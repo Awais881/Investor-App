@@ -196,6 +196,7 @@ function App() {
   const cat2 = localStorage.getItem("email");
   const cat3 = localStorage.getItem("user_ID");
   console.log("cat------------------", user_Token);
+  // console.log("cat------------------", typeof user_Token);
 
   // useEffect(() => {
   //   console.log(user_Token);

@@ -1,18 +1,21 @@
-import './chat.css'
-import React from 'react';
+import "./chat.css";
+import React from "react";
 import { Link } from "react-router-dom";
-import Loader from '../assets/Rolling-1s-200px.gif'
-import moment from 'moment';
-import welcome from '../assets/welcome.svg'
+import Loader from "../assets/Rolling-1s-200px.gif";
+import moment from "moment";
+import welcome from "../assets/welcome.svg";
 import { useMemo, useCallback, useEffect, useContext, useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 import LogoutIcon from "@mui/icons-material/Logout";
 import axios from "axios";
 import InfoIcon from "@mui/icons-material/Info";
-import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
-
+import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
+// const bcrypt = require("bcryptjs");
+// import bcrypt from "bcryptjs";
+import  CryptoJS from "crypto-js";
+import { AES } from "crypto-js";
 import {
   MainContainer,
   Sidebar,
@@ -25,7 +28,6 @@ import {
   MessageGroup,
   Message,
   MessageSeparator,
-
   MessageList,
   MessageInput,
   TypingIndicator,
@@ -58,19 +60,21 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 import { useNavigate } from "react-router-dom";
 
-
 import { GlobalContext } from "../Context/context";
-import { message } from 'antd';
-import { Console, log } from 'console';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { message } from "antd";
+import { Console, log } from "console";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 export const Chat = ({ user }: { user: User }) => {
-
   // let { state, dispatch } = useContext(GlobalContext);
   // let { state, dispatch } = useContext(GlobalContext);
 
-  let previousDate:any = null;
-
-
+  let previousDate: any = null;
+  // const encryptId = (id :any) => {
+  //   const salt = bcrypt.genSaltSync(10);
+  //   const encryptedId = bcrypt.hashSync(id.toString(), salt);
+  //   return encryptedId;
+  // };
+  
   // const user_Data = useContext(GlobalContext);
 
   // const hellow = useContext(GlobalContext);
@@ -83,16 +87,15 @@ export const Chat = ({ user }: { user: User }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredChannels, setFilteredChannels] = useState([]);
 
-
   const [notificationState, setNotificationState] = useState(() => {
-    const storedState = localStorage.getItem('notificationState');
+    const storedState = localStorage.getItem("notificationState");
     return storedState ? JSON.parse(storedState) : {};
   });
 
   // const [previousDate, setPreviousDate] = useState<any>(null);
-   const [notification, setNotification] = useState("disable");
+  const [notification, setNotification] = useState("disable");
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  
+
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   const [userId, setUserId] = useState(localStorage.getItem("user_ID"));
   const [sidebarStyle, setSidebarStyle] = useState({});
@@ -102,7 +105,7 @@ export const Chat = ({ user }: { user: User }) => {
   const [chatContainerStyle, setChatContainerStyle] = useState({});
   const [messages, setMessages] = useState<any>([]);
   const [name, setName] = useState(null);
-  const [activeName, setActiveName] = useState(""); 
+  const [activeName, setActiveName] = useState("");
   const [notificationChannelId, setNotificationChannelId] = useState("");
   const [loading, setLoading] = useState(false);
   const [conversationContentStyle, setConversationContentStyle] = useState({});
@@ -112,15 +115,18 @@ export const Chat = ({ user }: { user: User }) => {
   const handleBackClick = () => setSidebarVisible(!sidebarVisible);
   const [selectedChats, setSelectedChats] = useState(false);
   let { state, dispatch } = useContext<any>(GlobalContext);
+  const [activeConvo, setActiveConvo] = useState(null);
   // const handleConversationClick = useCallback((channelID) => {
-  
-   
+
   //   if (sidebarVisible) {
   //     setSidebarVisible(false);
   //   }
   //     //  setChannelId(channelID)
   // }, [sidebarVisible, setSidebarVisible]);
-  
+ const encryptId = (id :any) => {
+        const encryptedId = CryptoJS.AES.encrypt(id.toString(), "HelloIamAwias").toString();
+        return encryptedId;
+      };
 
   const headers = {
     Authorization: `Bearer ${user_Token}`,
@@ -135,127 +141,122 @@ export const Chat = ({ user }: { user: User }) => {
     },
   };
   // console.log("notoddi", notification )
- 
+
   const data = {
     channel_id: notificationChannelId,
-    setting: notification
-  }
-  
-  const handleConversationClick = useCallback(async (channelId) => {
-    setIsScrollbarActive(true)
-    console.log('dddd');
-    
-    setSelectedChats(true)
-    setLoading(true);
-    setNotificationChannelId(channelId)
-    try {
-      if (sidebarVisible) {
-        setSidebarVisible(false);
+    setting: notification,
+  };
+
+  const handleConversationClick = useCallback(
+    async (channelId) => {
+      setActiveConvo(channelId);
+      setIsScrollbarActive(true);
+      console.log("dddd");
+
+      setSelectedChats(true);
+      setLoading(true);
+      setNotificationChannelId(channelId);
+      try {
+        if (sidebarVisible) {
+          setSidebarVisible(false);
+        }
+
+        const response = await axios.get(
+          "https://cloud1.sty-server.com/api/channel/message",
+          {
+            params: {
+              channel_id: channelId,
+            },
+            headers: headers,
+          }
+        );
+        setMessages(response.data.data);
+        console.log("response message", messages);
+
+        // Process the response as needed
+      } catch (error) {
+        console.log("Error fetching messages:", error);
       }
-    
-      const response = await axios.get("https://cloud1.sty-server.com/api/channel/message",
-         {
-                params: {
-                  channel_id: channelId,
-                },
-                headers: headers,
-              }
-      );
-      setMessages(response.data.data);
-          console.log("response message", messages)
-          
-          
-    
-      // Process the response as needed
-  
-    } catch (error) {
-      console.log("Error fetching messages:", error);
-    }
-    setLoading(false);
-  }, [sidebarVisible, setSidebarVisible]);
-  
+      setLoading(false);
+    },
+    [sidebarVisible, setSidebarVisible]
+  );
 
   // const handleLikeClick = () => {
-  
-  
+
   //   const updatedState = !isBellEnabled;
   //   setIsBellEnabled(updatedState);
   //   localStorage.setItem('bellState', JSON.stringify(updatedState));
-  //   if(notification== "disable"){   
+  //   if(notification== "disable"){
   //     setNotification("enable")
   //   }
   //   else  setNotification("disable")
   //   console.log("notoi", notification )
 
-
   //   sendNotification()
   // };
 
-
-  
-  const handleLikeClick = async (channelId :any) => {
+  const handleLikeClick = async (channelId: any) => {
     const updatedState = { ...notificationState };
     updatedState[channelId] = !updatedState[channelId];
     setNotificationState(updatedState);
-    localStorage.setItem('notificationState', JSON.stringify(updatedState));
+    localStorage.setItem("notificationState", JSON.stringify(updatedState));
     sendNotification(channelId, updatedState[channelId]);
   };
-  const sendNotification = async (channelId :any, enable :any) => {
+  const sendNotification = async (channelId: any, enable: any) => {
     try {
       const response = await axios.put(
-        'https://cloud1.sty-server.com/api/notification/setting',
+        "https://cloud1.sty-server.com/api/notification/setting",
         {
           channel_id: channelId,
-          setting: enable ? 'enable' : 'disable'
+          setting: enable ? "enable" : "disable",
         },
         {
           headers: {
-            Authorization: `Bearer ${user_Token}`
-          }
+            Authorization: `Bearer ${user_Token}`,
+          },
         }
       );
-
+      // if (response?.data?.status === 200) {
+      //   if (window.ReactNativeWebView) {
+      //     window.ReactNativeWebView.postMessage(enable);
+      //   }
+      // }
       // Handle the response as needed
     } catch (error) {
-      console.log('Error sending notification:', error);
+      console.log("Error sending notification:", error);
     }
   };
   const getChannels = async () => {
-
     setLoading(true);
     try {
-      let response = await axios.get(`https://cloud1.sty-server.com/api/channel-user`, headers1)
+      let response = await axios.get(
+        `https://cloud1.sty-server.com/api/channel-user`,
+        headers1
+      );
 
-      setUserChannel(response?.data?.data)
+      setUserChannel(response?.data?.data);
       //  setActiveName(response?.data?.data.channel_details[0].name)
-      
-            console.log("channel ids ", response?.data?.data?.channel_details[0].id);
 
-
+      console.log("channel ids ", response?.data?.data?.channel_details[0].id);
     } catch (error) {
       console.log("axios error: ", error);
-
-
     }
     setLoading(false);
+  };
 
-  }
+  // let  element = document.querySelector('#addClass');
 
-// let  element = document.querySelector('#addClass');
+  // // Step 2: Attach an event listener
+  // element.addEventListener('click', function() {
+  //   // Step 3: Add the class
+  //   element.classList.add('ps--active-x');
+  // });
 
-// // Step 2: Attach an event listener
-// element.addEventListener('click', function() {
-//   // Step 3: Add the class
-//   element.classList.add('ps--active-x');
-// });
-
- 
-  
   // const sendNotification = async () => {
   //   try {
   //     const response = await axios.put(
   //       "https://cloud1.sty-server.com/api/notification/setting",
-       
 
   //       data, headers1
   //         // params: {
@@ -265,9 +266,8 @@ export const Chat = ({ user }: { user: User }) => {
   //         // headers: {
   //         //   Authorization: `Bearer ${user_Token}`,
   //         // }
-       
+
   //     );
-    
 
   //   } catch (error) {
   //     console.log("Error fetching messages:", error);
@@ -278,17 +278,15 @@ export const Chat = ({ user }: { user: User }) => {
   //   if(activeName){
   //     console.log("Name Activated" , activeName)
   //   }
-   
+
   // }, [activeName]);
-
-
 
   useEffect(() => {
     console.log("user channel details: ", userChannel);
     console.log("user message details: ", messages);
   }, [userChannel, messages]);
 
-  const MessageTime = ({ time }:any) => {
+  const MessageTime = ({ time }: any) => {
     return <span className="message-time">{time}</span>;
   };
   useEffect(() => {
@@ -334,7 +332,7 @@ export const Chat = ({ user }: { user: User }) => {
     setActiveConversation,
     sendMessage,
     getUser,
-   currentMessage,
+    currentMessage,
     setCurrentMessage,
     sendTyping,
     setCurrentUser,
@@ -356,10 +354,9 @@ export const Chat = ({ user }: { user: User }) => {
         const user = getUser(participant.id);
 
         if (user) {
-          console.log("user", user)
+          console.log("user", user);
           return [<Avatar src={user.avatar} />, user.username];
         }
-
       }
     }
 
@@ -431,81 +428,71 @@ export const Chat = ({ user }: { user: User }) => {
   }, [activeConversation, getUser]);
 
   const logout = () => {
-
     // dispatch({
     //   type: 'USER_LOGOUT',
 
     // })
     dispatch({
-      type: 'USER_LOGOUT',
-     
-  
-  })
-     localStorage.clear();
+      type: "USER_LOGOUT",
+    });
+    localStorage.clear();
     navigate("/login");
-
-
   };
 
   const AccountSetting = () => {
-  
-      
     navigate("/account-setting");
-
-    
   };
-
-
 
   const helloworld = () => {
     console.log("abc");
   };
 
-
   return (
     <div
-    
       style={{
         height: "750px",
         position: "relative",
-        
       }}
     >
       <MainContainer responsive className="border-0  main-container">
-        <Sidebar position="left" scrollable={true} style={sidebarStyle} id='side-bar' className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${isScrollbarActive ? 'ps--active-x' : 'sidebar'}`}>
+        <Sidebar
+          position="left"
+          scrollable={true}
+          style={sidebarStyle}
+          id="side-bar"
+          className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${
+            isScrollbarActive ? "ps--active-x" : "sidebar"
+          }`}
+        >
           {/* <NavbarChat /> */}
           <div
             style={{
-                borderBottom: "1px solid #cedbe3",
-               
-                paddingLeft: 15,
+              borderBottom: "1px solid #cedbe3",
+
+              paddingLeft: 15,
               paddingRight: 10,
               height: 74,
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-             
             }}
           >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                
               }}
             >
-              <div 
+              <div
                 style={{
                   marginLeft: 30,
                   fontSize: 25,
                   fontFamily: "sans-serif",
                   fontWeight: "bold",
-                  
                 }}
               >
                 Channels
               </div>
-          
             </div>
             <div className="dropdown">
               <MoreHorizIcon
@@ -520,10 +507,9 @@ export const Chat = ({ user }: { user: User }) => {
 
               <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <li className="dropdown-item" onClick={AccountSetting}>
-
-                <Link to={`/account-setting`} className='account-setting'>Account Setting</Link>
-            
-          
+                  <Link to={`/account-setting`} className="account-setting">
+                    Account Setting
+                  </Link>
                 </li>
                 <li
                   className="dropdown-item"
@@ -537,125 +523,102 @@ export const Chat = ({ user }: { user: User }) => {
                   {/* <LogoutIcon /> */}
                 </li>
               </ul>
-             
             </div>
           </div>
-      
 
-        
           {/* side bar */}
-     
 
-          <ConversationList className='conversationList'>
+          <ConversationList className="conversationList">
             {/* Search Input */}
             <div className="searchContainer">
-
-              {/* <input type="text" className="searchInput" 
+              <Search
+                className="searchInput"
+                placeholder="Search Channels..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Channels"  /> */}
-              {/* <Search placeholder="Search Channels..."
-               value={searchQuery}
-               onChange={(e) => setSearchQuery(e.target.value)} />
-             */}
-               <Search  className="searchInput" 
-  placeholder="Search Channels..."
-  value={searchQuery}
-  onChange={(value: any) => setSearchQuery(value)}
-/>
-
-
+                onChange={(value: any) => setSearchQuery(value)}
+              />
             </div>
 
-            {/* Conversation List */}
             {userChannel
-               .filter((c:any) =>
-               c.channel_details[0].name.toLowerCase().includes(searchQuery.toLowerCase()))
-            .map((c: any) => {
-
-            
-
-
-              // const [avatar, name] = (() => {
+              .filter((c: any) =>
+                c.channel_details[0].name
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())
+              )
+              .map((c: any) => {
                 const participant =
-                  c.channel_details.length > 0 ? c.channel_details[0] : undefined;
+                  c.channel_details.length > 0
+                    ? c.channel_details[0]
+                    : undefined;
 
-                // setActiveName( c.channel_details[0].name)
-              //   if (participant) {
-
-              //     console.log("participant ", participant)
-              //     const user = getUser(participant.id);
-              //     console.log("participant user ", user)
-              //     if (user) {
-              //       return [user.name];
-              //     }
-              //   }
-
-              //   return [undefined, undefined];
-              // })();
-              return (
-                <Conversation   className='conversations'
-                // className={`scrollbar-container cs-sidebar cs-sidebar--left sidebar ps ${
-                //   isScrollbarActive ? 'ps--active-x' : ''
-                // }`}
-                  key={c.id} // Add a unique key prop for each conversation
-                  unreadCnt={c.unreadCounter}
-                  active={activeConversation?.id === c.id}
-                  onClick={() => {handleConversationClick( c.channel_id)
-                    setActiveName(c.channel_details[0].name) 
-                  }}
-                
-                  
-                >
-                  <Conversation.Content className='conversationsContent' 
-                    name={c.channel_details[0].name}
-                    //  name={'name'}
-                    style={conversationContentStyle}
-                    onClick={() => { setActiveConversation(c.id);  
-                      setActiveName(c.channel_details[0].name) 
+                return (
+                  <Conversation
+                    className={
+                      activeConvo === c.channel_id ? "active" : "conversations"
+                    }
+                    key={c.id} // Add a unique key prop for each conversation
+                    unreadCnt={c.unreadCounter}
+                    // active={activeConversation?.id === c.id}
+                    onClick={() => {
+                      handleConversationClick(c.channel_id);
+                      setActiveName(c.channel_details[0].name);
                     }}
-                   
-                  />
-                  <Avatar src={HashImage} onClick={() => { setActiveConversation(c.id); setActiveName(c.channel_details[0].name) }} />
-                </Conversation>
-              );
-            })}
+                  >
+                    <Conversation.Content
+                      className="conversationsContent"
+                      name={c.channel_details[0].name}
+                      //  name={'name'}
+                      style={conversationContentStyle}
+                      onClick={() => {
+                        setActiveConversation(c.id);
+                        setActiveName(c.channel_details[0].name);
+                      }}
+                    />
+                    <Avatar
+                      src={HashImage}
+                      onClick={() => {
+                        setActiveConversation(c.id);
+                        setActiveName(c.channel_details[0].name);
+                      }}
+                    />
+                  </Conversation>
+                );
+              })}
           </ConversationList>
-        
-
         </Sidebar>
 
         {/* messages List */}
 
+        {loading && (
+          <div className="loader">
+            <img height={50} src={Loader} alt="loading" />
+          </div>
+        )}
 
-        {loading && 
+        {!loading && (
+          <ChatContainer style={chatContainerStyle} className="chat-container">
+            <ConversationHeader>
+              <ConversationHeader.Back onClick={handleBackClick} />
 
-<div className='loader' >
+              <ConversationHeader.Content
+                className="activeName"
+                userName={activeName}
+                // info="Active 10 mins ago"
+              />
 
-<img height={50} src={Loader} alt="loading" />
-
-</div>}
-
-   {!loading && (
-<ChatContainer style={chatContainerStyle} className='chat-container'>
- <ConversationHeader>
-   <ConversationHeader.Back onClick={handleBackClick} />
-     
-   <ConversationHeader.Content className='activeName'
-     userName={activeName}
-   // info="Active 10 mins ago"
-   />
-
-   <ConversationHeader.Actions>
-     {/* <SwipeableTemporaryDrawer /> */}
-     <div onClick={() => handleLikeClick(notificationChannelId)}>
-
-{/* {isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>} */}
-{notificationState[notificationChannelId] ? <NotificationsActiveOutlinedIcon color="primary" /> : <NotificationsOffIcon color="primary"  />}
-</div>
-   </ConversationHeader.Actions>
- </ConversationHeader>
- {/* {activeConversation && (
+              <ConversationHeader.Actions>
+                {/* <SwipeableTemporaryDrawer /> */}
+                <div onClick={() => handleLikeClick(notificationChannelId)}>
+                  {/* {isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>} */}
+                  {notificationState[notificationChannelId] ? (
+                    <NotificationsActiveOutlinedIcon color="primary" />
+                  ) : (
+                    <NotificationsOffIcon color="primary" />
+                  )}
+                </div>
+              </ConversationHeader.Actions>
+            </ConversationHeader>
+            {/* {activeConversation && (
    <ConversationHeader>
      <ConversationHeader.Back onClick={handleBackClick} />
 
@@ -669,7 +632,7 @@ export const Chat = ({ user }: { user: User }) => {
    </ConversationHeader>
  )} */}
 
-  {/* <MessageList typingIndicator={getTypingIndicator()}>
+            {/* <MessageList typingIndicator={getTypingIndicator()}>
    {
      messages.map((g: any) => (
 
@@ -704,10 +667,7 @@ export const Chat = ({ user }: { user: User }) => {
 
  </MessageList>  */}
 
-
-
-
-{/* <MessageList className='messagesList'>
+            {/* <MessageList className='messagesList'>
   {messages.map((g:any, index:number) => {
     const currentDate = moment(g.created_at).format('D/M/YY');
     const previousDate = index > 0 ? moment(messages[index - 1].created_at).format('D/M/YY') : null;
@@ -741,10 +701,7 @@ export const Chat = ({ user }: { user: User }) => {
   })}
 </MessageList> */}
 
- 
-
-
-{/* <MessageList className="messagesList">
+            {/* <MessageList className="messagesList">
   {messages.map((g: any, index: number) => {
     const currentDate = moment(g.created_at).format("D/M/YY");
     const previousDate =
@@ -777,61 +734,79 @@ export const Chat = ({ user }: { user: User }) => {
   })}
 </MessageList> */}
 
+            <MessageList className="messagesList">
+              {messages.map((g: any, index: number) => {
+                const currentDate = moment(g.created_at).format("D/M/YY");
+                const previousDate =
+                  index > 0
+                    ? moment(messages[index - 1].created_at).format("D/M/YY")
+                    : null;
+                const showDateSeparator = currentDate !== previousDate;
 
-<MessageList className="messagesList">
-  {messages.map((g: any, index: number) => {
-    const currentDate = moment(g.created_at).format("D/M/YY");
-    const previousDate =
-      index > 0 ? moment(messages[index - 1].created_at).format("D/M/YY") : null;
-    const showDateSeparator = currentDate !== previousDate;
+                return (
+                  <React.Fragment key={g.id}>
+                    {showDateSeparator && (
+                      <MessageSeparator className="date-separator">
+                        {currentDate}
+                      </MessageSeparator>
+                    )}
 
-    return (
-      <React.Fragment key={g.id}>
-        {showDateSeparator && (
-          <MessageSeparator className="date-separator">
-            {currentDate}
-          </MessageSeparator>
-        )}
+                    <Message
+                      className="messages"
+                      model={{
+                        // type: g.content_type === "html" ? "html" : "text",
+                        // message:
+                        //   g.content_type === "html"
+                        //     ? `<a href="${g.link}" target="_blank">${g.link}</a>`
+                        //     : g.content,
 
-        <Message
-          className="messages"
-          model={{
-            type: g.content_type === "html" ? "html" : "text",
-            message:
-              g.content_type === "html"
-                ? `<a href="${g.link}" target="_blank">${g.link}</a>`
-                : g.content,
-
-            direction: "incoming",
-            position: "single",
-          }}
-        >
-          <Message.HtmlContent
+                        direction: "incoming",
+                        position: "single",
+                      }}
+                    >
+                      {/* <Message.HtmlContent
             html={`${
               g.content_type === "html" ? 
-              `<a href="${g.link}" target="_blank">${g.link}</a><br>` 
+              // `<a href="${g.link}" target="_blank">${g.link}</a><br>` 
+              // <Link to={"/m/"+g.id+"}> {g.link} </Link>
+
+              `<Link>${g.link}</Link>`
               : 
               `${g.content}`
-            } <span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
+            } <br/><span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
           />
-          
-        </Message>
-      </React.Fragment>
-    );
-  })}
-</MessageList>
+           */}
+   
 
+                      {g.content_type === "html" ? (
+                        <Message.HtmlContent
+                          html={`<a href="/m/${encryptId(g.id)}">${
+                            g.link  
+                          }<a><br><span class="message-time">${moment(
+                            g.created_at
+                          ).format("hh:mm A")}</span>`}
+                        ></Message.HtmlContent>
+                      ) : (
+                        <Message.HtmlContent
+                        html={`${g.content}
+                          
+                        <a><br><span class="message-time">${moment(
+                          g.created_at
+                        ).format("hh:mm A")}</span>`}
+                      ></Message.HtmlContent>
 
+                      )}
+                    </Message>
+                  </React.Fragment>
+                );
+              })}
+            </MessageList>
 
-
-
- {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
-</ChatContainer>
-
-
-)}
-</MainContainer>
-</div>
-);
+            {/* <MessageInput value={currentMessage} onChange={handleChange} onSend={handleSend} disabled={!activeConversation} attachButton={false} placeholder="Type here..." /> */}
+          </ChatContainer>
+        )}
+      </MainContainer>
+    </div>
+  );
 };
 export default Chat;
