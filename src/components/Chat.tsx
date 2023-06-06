@@ -161,16 +161,19 @@ export const Chat = ({ user }: { user: User }) => {
           setSidebarVisible(false);
         }
 
+        // const response = await axios.get(`https://cloud1.sty-server.com/api/channel/message/${channelId}`,
         const response = await axios.get(
-          "https://cloud1.sty-server.com/api/channel/message",
+          `${state.baseUrl}api/channel/message/${channelId}`,
+         
           {
-            params: {
-              channel_id: channelId,
-            },
+            // params: {
+            //   channel_id: channelId,
+            // },
             headers: headers,
           }
-        );
-        setMessages(response.data.data);
+          );
+          setMessages(response.data.data);
+          console.log("response ", response);
         console.log("response message", messages);
 
         // Process the response as needed
@@ -206,7 +209,8 @@ export const Chat = ({ user }: { user: User }) => {
   const sendNotification = async (channelId: any, enable: any) => {
     try {
       const response = await axios.put(
-        "https://cloud1.sty-server.com/api/notification/setting",
+        // "https://cloud1.sty-server.com/api/notification/setting",
+        `${state.baseUrl}api/notification/setting`,
         {
           channel_id: channelId,
           setting: enable ? "enable" : "disable",
@@ -231,7 +235,8 @@ export const Chat = ({ user }: { user: User }) => {
     setLoading(true);
     try {
       let response = await axios.get(
-        `https://cloud1.sty-server.com/api/channel-user`,
+        // `https://cloud1.sty-server.com/api/channel-user`,
+        `${state.baseUrl}api/channel-user`,
         headers1
       );
 
@@ -751,31 +756,16 @@ export const Chat = ({ user }: { user: User }) => {
                       </MessageSeparator>
                     )}
 
-                    <Message
+                    {/* <Message
                       className="messages"
                       model={{
-                        // type: g.content_type === "html" ? "html" : "text",
-                        // message:
-                        //   g.content_type === "html"
-                        //     ? `<a href="${g.link}" target="_blank">${g.link}</a>`
-                        //     : g.content,
+            
 
                         direction: "incoming",
                         position: "single",
                       }}
                     >
-                      {/* <Message.HtmlContent
-            html={`${
-              g.content_type === "html" ? 
-              // `<a href="${g.link}" target="_blank">${g.link}</a><br>` 
-              // <Link to={"/m/"+g.id+"}> {g.link} </Link>
-
-              `<Link>${g.link}</Link>`
-              : 
-              `${g.content}`
-            } <br/><span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
-          />
-           */}
+            
    
 
                       {g.content_type === "html" ? (
@@ -796,7 +786,31 @@ export const Chat = ({ user }: { user: User }) => {
                       ></Message.HtmlContent>
 
                       )}
-                    </Message>
+                    </Message> */}
+
+
+                    <Message
+  className="messages"
+  model={{
+    direction: "incoming",
+    position: "single",
+  }}
+>
+  {g.content_type === "html" ? (
+    <Message.HtmlContent  
+      html={`<a  href="/m/${encryptId(g.id)}" >
+      ${`${state.localURI}/m/${encryptId(g.id)}`}</a> <span class="message-time">
+      ${moment(g.created_at).format("hh:mm A")}
+      </span>`}
+    ></Message.HtmlContent>
+  ) : (
+    <Message.HtmlContent   
+      html={`${g.content}<span class="message-time">
+      ${moment(g.created_at).format("hh:mm A")}</span>`}
+    ></Message.HtmlContent>
+  )}
+</Message>
+
                   </React.Fragment>
                 );
               })}

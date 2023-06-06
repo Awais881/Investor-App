@@ -11,6 +11,9 @@ border-radius: 12px;
    
    
 }
+/* .text-messages{
+  padding:15px;
+} */
 .conversations{
     background: #F8FCFF;
     /* box-shadow: 5px 4px 20px rgba(0, 0, 0, 0.1); */
@@ -107,6 +110,9 @@ padding: 10px !important;
   }
   .active:hover{
     background-color: white;
+  }
+  a{
+   text-decoration: none;
   }
  @media only screen and (max-width: 768px) { 
     .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps {

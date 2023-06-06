@@ -1,59 +1,4 @@
-// import axios from "axios";
-// import { useEffect, useState, useContext } from 'react';
-// import { GlobalContext } from '../Context/context';
 
-// import { useParams } from "react-router-dom";
-
-// function ChatScreen() {
-//     const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
-//     const [messages, setMessages] = useState([]);
-//     let { state, dispatch } = useContext(GlobalContext);
-//     const { id } = useParams();
-//     const headers = {
-//         headers: {
-//           Authorization: `Bearer ${user_Token}`,
-//         },
-//       };
-
-//     console.log('this is param')
-//     console.log(id)
-
-//     const getMessages = async (e) =>{
-//         if (e) e.preventDefault();
-//         try{
-//             const response = await axios.get(`https://cloud1.sty-server.com/api/m/${id}`,
-//             headers
-
-//             )
-//             console.log("response : ", response);
-//             setMessages(response.data)
-//           console.log(messages)
-
-//         }
-
-//             catch (error) {
-//               console.log("error in getting users", error);
-
-//           }
-
-//       }
-
-//     useEffect(() => {
-
-//         getMessages();
-
-//       }, [])
-//     // https://cloud1.sty-server.com/api/m/44
-//     return (
-//         <>
-//         {messages.map((message) => (
-//           <div key={message.id}>{message.content}</div>
-//         ))}
-//       </>
-//     );
-// }
-
-// export default ChatScreen;
 
 import axios from "axios";
 import { useEffect, useState, useContext } from "react";
@@ -64,8 +9,9 @@ import CryptoJS from "crypto-js";
 function ChatScreen() {
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   const [messages, setMessages] = useState(null);
+  let { state, dispatch } = useContext(GlobalContext);
 
-  const { state, dispatch } = useContext(GlobalContext);
+ 
   const [decrypt, setDecrypt] = useState("");
   const { id } = useParams();
   const headers = {
@@ -74,10 +20,7 @@ function ChatScreen() {
     },
   };
 
-  // const encryptId = (id) => {
-  //     const encryptedId = CryptoJS.AES.encrypt(id.toString(), "secretKey").toString();
-  //     return encryptedId;
-  //   };
+  
 
   const decryptId = (encryptedId) => {
     try {
@@ -91,11 +34,12 @@ function ChatScreen() {
   };
 
   const getMessages = async () => {
+
     const temp = [];
     try {
       const decryptedId = decryptId(id);
       const response = await axios.get(
-        `https://cloud1.sty-server.com/api/m/${decryptedId}`,
+        `${state.baseUrl}api/m/${decryptedId}`,
         headers
       );
       console.log("response:", response.data);
@@ -108,11 +52,27 @@ function ChatScreen() {
   };
 
   useEffect(() => {
-    // setDecrypt(decryptId());
+  
 
     getMessages();
-  }, []);
 
+   
+
+  }, []);
+// import React, { useEffect } from 'react';
+// import { useParams } from 'react-router-dom';
+// import { useAPI } from './apiContext';
+
+// function ChatScreen() {
+//   const { decryptId, getMessages, messages } = useAPI();
+//   const { id } = useParams();
+
+//   useEffect(() => {
+//     const decryptedId = decryptId(id);
+//     if (decryptedId) {
+//       getMessages(decryptedId);
+//     }
+//   }, [decryptId, getMessages, id]);
   return (
     <>
       {Array.isArray(messages) && messages.length > 0 ? (

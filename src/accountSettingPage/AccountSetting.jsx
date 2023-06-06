@@ -54,8 +54,9 @@ const Form = () => {
   };
 
   const getUserData = async () => {
-    await axios
-      .get(`https://cloud1.sty-server.com/api/user`, headers)
+    await axios.get(
+      // .get(`https://cloud1.sty-server.com/api/user`, headers)
+      `${state.baseUrl}api/user`, headers)
       .then(function (response) {
         // console.log(response?.data?.status);
         if (response?.data?.status == 200) {
@@ -180,8 +181,9 @@ const Form = () => {
       };
   
       // Make the API request
-      axios
-        .put(`https://cloud1.sty-server.com/api/change/password`, data, headers)
+      axios.put(
+        // .put(`https://cloud1.sty-server.com/api/change/password`, data, headers)
+        `${state.baseUrl}api/change/password`,data, headers)
         .then(function (response) {
           if (response?.data?.status === 200) {
             if (window.ReactNativeWebView) {

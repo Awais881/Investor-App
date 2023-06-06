@@ -7,6 +7,7 @@ import { GlobalContext } from './Context/context';
 import { Routes, Route, Link,  Navigate } from "react-router-dom"
 import ForgotPsword from './components/login/ForgotPsword'
 import ChatScreen from './components/chatscreen'
+
 // import UsersState from './Context/reducer';
 import AccountSetting from './accountSettingPage/AccountSetting'
 import { BrowserRouter } from 'react-router-dom';
@@ -85,6 +86,7 @@ const FrontPage = () => {
 
             {(state.isLogin != (null || '' || undefined) && state.isLogin === true) ?
              
+                     
                     <Routes>
                         <Route path="/" element={<App />} />
                         <Route path='/m/:id' element={<ChatScreen />} />
@@ -92,17 +94,20 @@ const FrontPage = () => {
                        
                         <Route path="*" element={<Navigate to="/" replace={true} />} />
                     </Routes>
+                      
                 
                 : null}
 
             {state.isLogin == (null || '' || undefined || false) ?
            
 
+                       
                     <Routes>
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/forget-password" element={<ForgotPsword />} />
                         <Route path="*" element={<Navigate to="/login" replace={true} />} />
                     </Routes>
+                      
                 
                 : null
             }
