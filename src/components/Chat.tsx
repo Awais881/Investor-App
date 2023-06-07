@@ -1,6 +1,6 @@
 import "./chat.css";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useMatch  } from "react-router-dom";
 import Loader from "../assets/Rolling-1s-200px.gif";
 import moment from "moment";
 import welcome from "../assets/welcome.svg";
@@ -125,6 +125,7 @@ export const Chat = ({ user }: { user: User }) => {
   //   }
   //     //  setChannelId(channelID)
   // }, [sidebarVisible, setSidebarVisible]);
+  const match = useMatch('/m/:id');
   const encryptId =  (id: any) => {
     const encryptedId =  CryptoJS.AES.encrypt(
       id.toString(),
@@ -778,11 +779,12 @@ export const Chat = ({ user }: { user: User }) => {
                   //      ></Message.HtmlContent>
 
                   <Message.HtmlContent  
-      html={`<a  href="/m/${encryptId(g.id)}" >
+      html={`<a href="/m/${encryptId(g.id)}">
       ${`${state.localURI}/m/${encryptId(g.id)}`}</a> <span class="message-time">
       ${moment(g.created_at).format("hh:mm A")}
       </span>`}
     ></Message.HtmlContent>
+  
                    )
                       : (
                         <Message.HtmlContent

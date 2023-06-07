@@ -4,7 +4,7 @@ import Loader from './assets/Rolling-1s-200px.gif'
 import App from './App'
 import LoginPage from './components/login/Login'
 import { GlobalContext } from './Context/context';
-import { Routes, Route, Link,  Navigate } from "react-router-dom"
+import { Routes, Route, Link,  Navigate , useMatch} from "react-router-dom"
 import ForgotPsword from './components/login/ForgotPsword'
 import ChatScreen from './components/chatscreen'
 
@@ -68,7 +68,7 @@ const FrontPage = () => {
         //     else  navigate("/login")
         
         //   }, [user_Token, navigate]);
-      
+        const match = useMatch('/m/:id');
     return (
         <>
             {/* //  <UsersState> 
@@ -91,10 +91,15 @@ const FrontPage = () => {
                      
                     <Routes>
                         <Route path="/" element={<App />} />
-                        <Route path='/m/:id' element={<ChatScreen />} />
+                        <Route path='/m/:id/' element={<ChatScreen />} />
+                     
                         <Route path="/account-setting" element={<AccountSetting />} />
-                       
                         {/* <Route path="*" element={<Navigate to="/" replace={true} />} /> */}
+                        {match ? (
+           <Route path={match.path} element={<ChatScreen />} />
+           ) : (
+         <Route path="*" element={<Navigate to="/" replace={true} />} />
+         )}
                     </Routes>
                       
                 
