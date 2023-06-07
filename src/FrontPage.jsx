@@ -94,7 +94,7 @@ const FrontPage = () => {
                         <Route path='/m/:id' element={<ChatScreen />} />
                         <Route path="/account-setting" element={<AccountSetting />} />
                        
-                        <Route path="*" element={<Navigate to="/" replace={true} />} />
+                        {/* <Route path="*" element={<Navigate to="/" replace={true} />} /> */}
                     </Routes>
                       
                 

@@ -92,15 +92,16 @@ export const Chat = ({ user }: { user: User }) => {
     const storedState = localStorage.getItem("notificationState");
     return storedState ? JSON.parse(storedState) : {};
   });
+  const [notificationResponse, setNotificationResponse] = useState({});
 
-  // const [previousDate, setPreviousDate] = useState<any>(null);
-  const [notification, setNotification] = useState("disable");
+  
+  const [notification, setNotification] = useState("enable");
   const [sidebarVisible, setSidebarVisible] = useState(true);
 
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   const [userId, setUserId] = useState(localStorage.getItem("user_ID"));
   const [sidebarStyle, setSidebarStyle] = useState({});
-  // let [channelDetails, setChannelDetails] = useState([]);
+ 
   let [userChannel, setUserChannel] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [chatContainerStyle, setChatContainerStyle] = useState({});
@@ -161,10 +162,10 @@ export const Chat = ({ user }: { user: User }) => {
   };
   // console.log("notoddi", notification )
 
-  const data = {
-    channel_id: notificationChannelId,
-    setting: notification,
-  };
+  // const data = {
+  //   channel_id: notificationChannelId,
+  //   setting: notification,
+  // };
 
   const handleConversationClick = useCallback(
     async (channelId) => {
@@ -218,17 +219,23 @@ export const Chat = ({ user }: { user: User }) => {
   //   sendNotification()
   // };
 
+
   const handleLikeClick = async (channelId: any) => {
     const updatedState = { ...notificationState };
-    updatedState[channelId] = !updatedState[channelId];
+    const enable = !updatedState[channelId]; // Toggle the notification setting
+  
+    // Send the notification setting to the server
+    await sendNotification(channelId, enable);
+  
+    // Update the local notification state based on the response
+    updatedState[channelId] = enable;
     setNotificationState(updatedState);
     localStorage.setItem("notificationState", JSON.stringify(updatedState));
-    sendNotification(channelId, updatedState[channelId]);
   };
+
   const sendNotification = async (channelId: any, enable: any) => {
     try {
       const response = await axios.put(
-        // "https://cloud1.sty-server.com/api/notification/setting",
         `${state.baseUrl}api/notification/setting`,
         {
           channel_id: channelId,
@@ -240,34 +247,92 @@ export const Chat = ({ user }: { user: User }) => {
           },
         }
       );
-      // if (response?.data?.status === 200) {
-      //   if (window.ReactNativeWebView) {
-      //     window.ReactNativeWebView.postMessage(enable);
-      //   }
-      // }
       // Handle the response as needed
     } catch (error) {
       console.log("Error sending notification:", error);
     }
   };
+
+  // const handleLikeClick = async (channelId: any) => {
+  //   const updatedState = { ...notificationState };
+  //   updatedState[channelId] = !updatedState[channelId];
+  //   setNotificationState(updatedState);
+  //   localStorage.setItem("notificationState", JSON.stringify(updatedState));
+  //   sendNotification(channelId, updatedState[channelId]);
+  // };
+  // const sendNotification = async (channelId: any, enable: any) => {
+  //   try {
+  //     const response = await axios.put(
+  //       // "https://cloud1.sty-server.com/api/notification/setting",
+  //       `${state.baseUrl}api/notification/setting`,
+  //       {
+  //         channel_id: channelId,
+  //         setting: enable ? "enable" : "disable",
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${user_Token}`,
+  //         },
+  //       }
+  //     );
+  //     // if (response?.data?.status === 200) {
+  //     //   if (window.ReactNativeWebView) {
+  //     //     window.ReactNativeWebView.postMessage(enable);
+  //     //   }
+  //     // }
+  //     // Handle the response as needed
+      
+  //   } catch (error) {
+  //     console.log("Error sending notification:", error);
+  //   }
+  // };
+
+
   const getChannels = async () => {
     setLoading(true);
     try {
-      let response = await axios.get(
-        // `https://cloud1.sty-server.com/api/channel-user`,
+      const response = await axios.get(
         `${state.baseUrl}api/channel-user`,
         headers1
       );
 
-      setUserChannel(response?.data?.data);
-      //  setActiveName(response?.data?.data.channel_details[0].name)
+      const channels = response?.data?.data;
+      setUserChannel(channels);
 
-      console.log("channel ids ", response);
+      // Check notification state for each channel and update local state
+      const updatedState = { ...notificationState };
+      channels.forEach((channel :any) => {
+        const channelId = channel.channel_id;
+        const isNotificationEnabled = channel.notification === "enable";
+        updatedState[channelId] = isNotificationEnabled;
+      });
+      setNotificationState(updatedState);
+      localStorage.setItem("notificationState", JSON.stringify(updatedState));
     } catch (error) {
       console.log("axios error: ", error);
     }
     setLoading(false);
   };
+
+  // const getChannels = async () => {
+  //   setLoading(true);
+  //   try {
+  //     let response = await axios.get(
+  //       // `https://cloud1.sty-server.com/api/channel-user`,
+  //       `${state.baseUrl}api/channel-user`,
+  //       headers1
+  //     );
+
+  //     setUserChannel(response?.data?.data);
+    
+  //     //  setActiveName(response?.data?.data.channel_details[0].name)
+   
+  //     console.log("channel ids ", response.data.data);
+  //   } catch (error) {
+  //     console.log("axios error: ", error);
+  //   }
+  //   setLoading(false);
+  // };
 
   // let  element = document.querySelector('#addClass');
 
@@ -631,132 +696,19 @@ export const Chat = ({ user }: { user: User }) => {
               />
 
               <ConversationHeader.Actions>
-                {/* <SwipeableTemporaryDrawer /> */}
+               
                 <div onClick={() => handleLikeClick(notificationChannelId)}>
-                  {/* {isBellEnabled ? < NotificationsActiveOutlinedIcon /> : < NotificationsOffIcon/>} */}
+               
                   {notificationState[notificationChannelId] ? (
                     <NotificationsActiveOutlinedIcon color="primary" />
-                  ) : (
-                    <NotificationsOffIcon color="primary" />
+                    ) : (
+                      
+                      <NotificationsOffIcon color="primary" />
                   )}
                 </div>
               </ConversationHeader.Actions>
             </ConversationHeader>
-            {/* {activeConversation && (
-   <ConversationHeader>
-     <ConversationHeader.Back onClick={handleBackClick} />
-
-     <ConversationHeader.Content
-       userName={'mmmm'}
-       // info="Active 10 mins ago"
-     />
-     <ConversationHeader.Actions>
-       <SwipeableTemporaryDrawer />
-     </ConversationHeader.Actions>
-   </ConversationHeader>
- )} */}
-
-            {/* <MessageList typingIndicator={getTypingIndicator()}>
-   {
-     messages.map((g: any) => (
-
-         
-       <MessageGroup key={g.id} direction={g.direction}>
-         <MessageGroup.Messages>
-
-          <MessageSeparator>
-          {moment(g.created_at).format('dddd')}
-          </MessageSeparator>
-          
-
-     
-
-        
-<Message
-  model={{
-    type: g.content_type === "html" ? "html" : "text",
-    message: g.content_type === "html" ? `<a href="${g.link}" target=_blank>${g.link}</a>` : g.content,
-    sentTime: "15 mins ago",
-    sender: "Zoe",
-    direction: "incoming",
-    position: "single",
-  }}
-/>
-
-
-         </MessageGroup.Messages>
-       </MessageGroup>
-     ))}
-
-
- </MessageList>  */}
-
-            {/* <MessageList className='messagesList'>
-  {messages.map((g:any, index:number) => {
-    const currentDate = moment(g.created_at).format('D/M/YY');
-    const previousDate = index > 0 ? moment(messages[index - 1].created_at).format('D/M/YY') : null;
-    const showDateSeparator = currentDate !== previousDate;
-
-    return (
-      <React.Fragment key={g.id}>
-        {showDateSeparator && (
-          <MessageSeparator className="date-separator">
-            {currentDate}
-          </MessageSeparator>
-        )}
-     
-
-        <Message className='messages'
-          model={{
-            type: g.content_type === 'html' ? 'html' : 'text',
-            message: g.content_type === 'html' ? `<a href="${g.link}" target="_blank">${g.link}</a>` : g.content,
-            sentTime: `<MessageTime time={moment(g.created_at).format('hh:mm A')} />`,
-            direction: 'incoming',
-            position: 'single',
-          }}
-       />
-            
- 
-          
-
-          <MessageTime time={moment(g.created_at).format('hh:mm A')} /> 
-      </React.Fragment>
-    );
-  })}
-</MessageList> */}
-
-            {/* <MessageList className="messagesList">
-  {messages.map((g: any, index: number) => {
-    const currentDate = moment(g.created_at).format("D/M/YY");
-    const previousDate =
-      index > 0 ? moment(messages[index - 1].created_at).format("D/M/YY") : null;
-    const showDateSeparator = currentDate !== previousDate;
-
-    return (
-      <React.Fragment key={g.id}>
-        {showDateSeparator && (
-          <MessageSeparator className="date-separator">
-            {currentDate}
-          </MessageSeparator>
-        )}
-
-        <Message className="messages"
-          model={{
-            type: g.content_type === 'html' ? 'html' : 'text',
-            message: g.content_type === 'html' ? `<a href="${g.link}" target="_blank">${g.link}</a>` : g.content,
-            sentTime: `<MessageTime time={moment(g.created_at).format('hh:mm A')} />`,
-            direction: 'incoming',
-            position: 'single',
-          }}
-        >
-          <Message.HtmlContent
-            html={`${g.content}<br /><span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
-          />
-        </Message>
-      </React.Fragment>
-    );
-  })}
-</MessageList> */}
+           
 
             <MessageList className="messagesList">
               {messages.map((g: any, index: number) => {
