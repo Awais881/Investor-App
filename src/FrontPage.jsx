@@ -57,6 +57,8 @@ const FrontPage = () => {
            getUserData()
            
        }, [])
+       
+
         //    useEffect(() => {
         //     // Check if the user is already authenticated
         //     if (user_Token) {

@@ -159,7 +159,7 @@ form {
 
 @media screen and (max-width: 787px) {
   .HA_form_main_div {
-    width: 41vmax;
+    width: 100%;
   }
 
   .HA_from_heading_text1 {
@@ -175,7 +175,7 @@ form {
 
 @media screen and (max-width: 426px) {
   .HA_form_main_div {
-    width: 53vmax;
+    width: 100%;
   }
 }
 

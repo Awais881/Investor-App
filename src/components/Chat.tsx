@@ -12,9 +12,10 @@ import InfoIcon from "@mui/icons-material/Info";
 import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
+
 // const bcrypt = require("bcryptjs");
 // import bcrypt from "bcryptjs";
-import  CryptoJS from "crypto-js";
+import CryptoJS from "crypto-js";
 import { AES } from "crypto-js";
 import {
   MainContainer,
@@ -74,7 +75,7 @@ export const Chat = ({ user }: { user: User }) => {
   //   const encryptedId = bcrypt.hashSync(id.toString(), salt);
   //   return encryptedId;
   // };
-  
+
   // const user_Data = useContext(GlobalContext);
 
   // const hellow = useContext(GlobalContext);
@@ -123,10 +124,28 @@ export const Chat = ({ user }: { user: User }) => {
   //   }
   //     //  setChannelId(channelID)
   // }, [sidebarVisible, setSidebarVisible]);
- const encryptId = (id :any) => {
-        const encryptedId = CryptoJS.AES.encrypt(id.toString(), "HelloIamAwias").toString();
-        return encryptedId;
-      };
+  const encryptId =  (id: any) => {
+    const encryptedId =  CryptoJS.AES.encrypt(
+      id.toString(),
+      "HelloIamAwias"
+    ).toString();
+   
+    return encryptedId;
+  };
+  // const openLink = async (id: any) => {
+  //   // alert("me click");
+
+  //   console.log('id received ==>> ', id);
+  //   // alert(encryptId(id));
+    
+  //   const encryptedId = CryptoJS.AES.encrypt(
+  //     id.toString(),
+  //     "HelloIamAwias"
+  //     ).toString();
+      
+  //     navigate(`/m/${(encryptedId)}`)
+
+  // };
 
   const headers = {
     Authorization: `Bearer ${user_Token}`,
@@ -164,16 +183,16 @@ export const Chat = ({ user }: { user: User }) => {
         // const response = await axios.get(`https://cloud1.sty-server.com/api/channel/message/${channelId}`,
         const response = await axios.get(
           `${state.baseUrl}api/channel/message/${channelId}`,
-         
+
           {
             // params: {
             //   channel_id: channelId,
             // },
             headers: headers,
           }
-          );
-          setMessages(response.data.data);
-          console.log("response ", response);
+        );
+        setMessages(response.data.data);
+        console.log("response ", response);
         console.log("response message", messages);
 
         // Process the response as needed
@@ -243,7 +262,7 @@ export const Chat = ({ user }: { user: User }) => {
       setUserChannel(response?.data?.data);
       //  setActiveName(response?.data?.data.channel_details[0].name)
 
-      console.log("channel ids ", response?.data?.data?.channel_details[0].id);
+      console.log("channel ids ", response);
     } catch (error) {
       console.log("axios error: ", error);
     }
@@ -787,30 +806,39 @@ export const Chat = ({ user }: { user: User }) => {
 
                       )}
                     </Message> */}
-
-
                     <Message
-  className="messages"
-  model={{
-    direction: "incoming",
-    position: "single",
-  }}
->
-  {g.content_type === "html" ? (
-    <Message.HtmlContent  
+                      className="messages"
+                      // onClick={() => openLink(g.id)}
+                      model={{
+                        direction: "incoming",
+                        position: "single",
+                      }}
+                    >
+                      {/* <span onClick={() => openLink(g.id)}> */}
+
+                      {g.content_type === "html" ? (
+
+                  // <Message.HtmlContent  
+                  // html={`
+                  //   ${`${state.localURI}/m/${g.id}`}<span class="message-time">'
+                  //    ${moment(g.created_at).format("hh:mm A")}
+                  //      </span>`}
+                  //      ></Message.HtmlContent>
+
+                  <Message.HtmlContent  
       html={`<a  href="/m/${encryptId(g.id)}" >
       ${`${state.localURI}/m/${encryptId(g.id)}`}</a> <span class="message-time">
       ${moment(g.created_at).format("hh:mm A")}
       </span>`}
     ></Message.HtmlContent>
-  ) : (
-    <Message.HtmlContent   
-      html={`${g.content}<span class="message-time">
+                   )
+                      : (
+                        <Message.HtmlContent
+                          html={`${g.content}<span class="message-time">
       ${moment(g.created_at).format("hh:mm A")}</span>`}
-    ></Message.HtmlContent>
-  )}
-</Message>
-
+                        ></Message.HtmlContent>
+                      )}
+                    </Message>
                   </React.Fragment>
                 );
               })}

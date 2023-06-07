@@ -27,8 +27,8 @@ const Form = () => {
   const classes = useStyles();
   const [checked, setChecked] = React.useState(true);
   // const [notification, setNotification] = React.useState("enable");
-  const [notification, setNotification] = React.useState(
-    localStorage.getItem("notification") === "enable"
+  const [notification, setNotification] = useState(
+    localStorage.getItem("notification") === "disable" ? false : true
   );
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -215,6 +215,7 @@ const Form = () => {
   };
   const handleSwitchChange = (event) => {
     const newNotificationValue = event.target.checked;
+     console.log(checked);
     setNotification(newNotificationValue);
     localStorage.setItem("notification", newNotificationValue ? "enable" : "disable");
   };
