@@ -17,7 +17,7 @@ let data = {
   user: {},
   isLogin: null,
   baseUrl: `https://cloud1.sty-server.com/`,
-  localURI: (window.location.href.includes('localhost'))? `https://localhost:3000` :`https://investor-e9e1c.web.app`
+  localURI: (window.location.href.includes('localhost'))? `localhost:3000` :`https://investor-e9e1c.web.app`
   
    
  

@@ -405,7 +405,7 @@ export const Chat = ({ user }: { user: User }) => {
       if (activeConvo) {
         fetchData();
       }
-    }, 10000); // Call the function every 10 seconds (10000 milliseconds)
+    }, 5000); // Call the function every 10 seconds (10000 milliseconds)
   
     return () => {
       clearInterval(interval); // Clean up the interval on component unmount
