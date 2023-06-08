@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from 'react'
 import ReactDOM from 'react-dom';
 import './index.css';
 // import App from './App';
@@ -7,18 +7,19 @@ import FrontPage from './FrontPage';
 import GlobalContext from "./Context/context"
 import { BrowserRouter } from 'react-router-dom';
 import OneSignal from 'react-onesignal';
+let  notification =   localStorage.getItem("notification") 
 ReactDOM.render(
 
 
 
 
-  <React.StrictMode>
+  // <React.StrictMode>
   <GlobalContext>
     <BrowserRouter>
     <FrontPage />
     </BrowserRouter>
-  </GlobalContext >
-  </React.StrictMode>,
+  </GlobalContext >,
+  // </React.StrictMode>,
   
 
   document.getElementById('root')
@@ -43,7 +44,7 @@ ReactDOM.render(
   window.OneSignal = window.OneSignal || [];
   OneSignal.push(function() {
     OneSignal.init({
-      appId: "2924c1c9-91a4-48b0-8851-284509bcf848",
+      appId: notification ?  "2924c1c9-91a4-48b0-8851-284509bcf848" : ""
     })
   });
 </script>

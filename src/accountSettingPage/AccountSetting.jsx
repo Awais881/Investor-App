@@ -188,7 +188,7 @@ const Form = () => {
         .then(function (response) {
           if (response?.data?.status === 200) {
             if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage(checked ? "enable" : "disable");
+              window.ReactNativeWebView.postMessage(notification ? "enable" : "disable");
             }
             
             Toast.fire({

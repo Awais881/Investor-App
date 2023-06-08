@@ -370,7 +370,48 @@ export const Chat = ({ user }: { user: User }) => {
   //   }
 
   // }, [activeName]);
-
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (activeConvo) {
+  //       handleConversationClick(activeConvo);
+  //     }
+  //   }, 10000); 
+  
+  //   return () => {
+  //     clearInterval(interval); 
+  //   };
+  // }, [activeConvo, handleConversationClick]);
+  useEffect(() => {
+    let isNewMessage = false; // Flag to track new messages
+  
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${state.baseUrl}api/channel/message/${activeConvo}`,
+          { headers }
+        );
+  
+        if (response.data.data.length > messages.length) {
+          // New message(s) received
+          isNewMessage = true;
+          setMessages(response.data.data);
+        }
+      } catch (error) {
+        console.log("Error fetching messages:", error);
+      }
+    };
+  
+    const interval = setInterval(() => {
+      if (activeConvo) {
+        fetchData();
+      }
+    }, 10000); // Call the function every 10 seconds (10000 milliseconds)
+  
+    return () => {
+      clearInterval(interval); // Clean up the interval on component unmount
+    };
+  }, [activeConvo, messages.length, state.baseUrl, headers]);
+  
   useEffect(() => {
     console.log("user channel details: ", userChannel);
     console.log("user message details: ", messages);
@@ -381,7 +422,8 @@ export const Chat = ({ user }: { user: User }) => {
   };
   useEffect(() => {
     getChannels();
-    // getMessages();
+    // handleConversationClick()
+   
 
     if (sidebarVisible) {
       setSidebarStyle({
@@ -771,15 +813,10 @@ export const Chat = ({ user }: { user: User }) => {
 
                       {g.content_type === "html" ? (
 
-                  // <Message.HtmlContent  
-                  // html={`
-                  //   ${`${state.localURI}/m/${g.id}`}<span class="message-time">'
-                  //    ${moment(g.created_at).format("hh:mm A")}
-                  //      </span>`}
-                  //      ></Message.HtmlContent>
+           
 
                   <Message.HtmlContent  
-      html={`<a href="/m/${encryptId(g.id)}">
+                    html={`<a href="/m/${encryptId(g.id)}">
       ${`${state.localURI}/m/${encryptId(g.id)}`}</a> <span class="message-time">
       ${moment(g.created_at).format("hh:mm A")}
       </span>`}
