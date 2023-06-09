@@ -83,10 +83,9 @@ function ChatScreen() {
 
     if (user_Token) {
       fetchData();
+    } else {
+      navigate("/");
     }
-    // else {
-    //   navigate("/");
-    // }
   }, [user_Token, navigate]);
 
   return (
