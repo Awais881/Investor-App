@@ -3,13 +3,16 @@ import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { GlobalContext } from "../Context/context";
 import { useParams } from "react-router-dom";
-import { AES } from "crypto-js";
+// import { AES } from "crypto-js";
 import Loader from "../assets/Rolling-1s-200px.gif";
 import CryptoJS from "crypto-js";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Link } from "react-router-dom";
 import usePagination from "@mui/material/usePagination/usePagination";
+
+import { AES, enc } from "crypto-js";
+
 function ChatScreen() {
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   const [messages, setMessages] = useState(null);
@@ -26,9 +29,19 @@ function ChatScreen() {
 
   const decryptId = (encryptedId) => {
     try {
-      const decryptedBytes = AES.decrypt(encryptedId, "HelloIamAwias");
-      const decryptedId = decryptedBytes.toString(CryptoJS.enc.Utf8);
-      return decryptedId;
+      // const decryptedBytes = AES.decrypt(encryptedId, "HelloIamAwias");
+      // const decryptedId = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+      // console.log(parseInt(decryptedId));
+      // console.log(JSON.parse(decryptedId));
+
+      // return JSON.parse(decryptedId);
+
+      const decrypted = AES.decrypt(
+        enc.Hex.parse(encryptedId).toString(enc.Utf8),
+        "secret passphrase"
+      ).toString(enc.Utf8);
+      return decrypted;
     } catch (error) {
       console.log("Error in decryption:", error);
       return null; // or handle the error as per your requirements
@@ -43,9 +56,9 @@ function ChatScreen() {
         `${state.baseUrl}api/m/${decryptedId}`,
         headers
       );
-      console.log("response:", response.data);
+      // console.log("response:", response.data);
       temp.push(response?.data);
-      console.log("temp", temp);
+      // console.log("temp", temp); 
       setMessages(temp);
       return;
     } catch (error) {
@@ -55,7 +68,7 @@ function ChatScreen() {
 
   // useEffect(() => {
   //   console.log('Hello WOrld');
-  
+
   //   getMessages();
   // }, []);
 
@@ -70,9 +83,10 @@ function ChatScreen() {
 
     if (user_Token) {
       fetchData();
-    } else {
-      navigate("/");
     }
+    // else {
+    //   navigate("/");
+    // }
   }, [user_Token, navigate]);
 
   return (

@@ -65,11 +65,12 @@ const Form = () => {
             payload: response.data.user,
           });
 
-          console.log(response.data.user.name)
+          // console.log(response.data.user.name)
           setName(response.data.user.name);
           setEmail(response.data.user.email)
-          console.log("this is user name");
-          console.log(name);
+          setNotification(response.data.user.notification === "enable");
+          // console.log("this is user name");
+       
         }
       })
       .catch(function (error) {
@@ -187,7 +188,7 @@ const Form = () => {
         .then(function (response) {
           if (response?.data?.status === 200) {
             if (window.ReactNativeWebView) {
-              window.ReactNativeWebView.postMessage(checked ? "enable" : "disable");
+              window.ReactNativeWebView.postMessage(notification ? "enable" : "disable");
             }
             
             Toast.fire({
@@ -207,18 +208,19 @@ const Form = () => {
     }
   };
   
-  const handleChange = (event) => {
-    setChecked(event.target.checked);
-    setNotification("disable");
-    console.log(checked);
-    console.log("noti", notification);
-  };
   const handleSwitchChange = (event) => {
-    const newNotificationValue = event.target.checked;
-     console.log(checked);
-    setNotification(newNotificationValue);
-    localStorage.setItem("notification", newNotificationValue ? "enable" : "disable");
+    setChecked(event.target.checked);
+    setNotification(event.target.checked);
+
+    // Store the notification state in local storage
+    localStorage.setItem("notification", event.target.checked ? "enable" : "disable");
   };
+  // const handleSwitchChange = (event) => {
+  //   const newNotificationValue = event.target.checked;
+  //    console.log(checked);
+  //   setNotification(newNotificationValue);
+  //   localStorage.setItem("notification", newNotificationValue ? "enable" : "disable");
+  // };
   return (
     <div className="HA_main_div">
       <div className="HA_img mb-none">

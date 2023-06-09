@@ -1,142 +1,144 @@
 .conversationList{
-    padding: 10px 0px 10px 0px;
-    margin-top: 5px;
-    width: 100%;
+  padding: 10px 0px 10px 0px;
+  margin-top: 5px;
+  width: 100%;
 }
 .conversations:active{
-    background: #FFFFFF !important;
+  background: #FFFFFF !important;
 border-radius: 12px;
 }
 .conversations{
-   
-   
+ 
+ 
 }
 /* .text-messages{
-  padding:15px;
+padding:15px;
 } */
 .conversations{
-    background: #F8FCFF;
-    /* box-shadow: 5px 4px 20px rgba(0, 0, 0, 0.1); */
-    
- }
+  background: #F8FCFF;
+  /* box-shadow: 5px 4px 20px rgba(0, 0, 0, 0.1); */
+  
+}
 #side-bar {
-    height: 100vh;
-    background: #F8FCFF;
-    box-shadow: 5px 4px 20px rgba(0, 0, 0, 0.1);
+  height: 100vh;
+  background: #F8FCFF;
+  box-shadow: 5px 4px 20px rgba(0, 0, 0, 0.1);
 }
 .cs-search__input{
-   padding: 10px;
-  
+ padding: 10px;
+
 }
 
 /* .cs-search{
-    background-color: #F6FBFF;
+  background-color: #F6FBFF;
 } */
 .loader{
-    /* display: inline-block; */
-    position: relative;
-     top: 40%;
-       left: 40%;
-      width: 0px;
+  /* display: inline-block; */
+  position: relative;
+   top: 40%;
+     left: 40%;
+    width: 0px;
 }
 .imageLoader{
-    width: 100%;
+  width: 100%;
 }
 
 /* 
- .image{
-     display: flex;
- margin-top: 120px;
-    justify-content: center; 
-    width: 70%;
-    height: 300px;
-    margin-left: 100px;
+.image{
+   display: flex;
+margin-top: 120px;
+  justify-content: center; 
+  width: 70%;
+  height: 300px;
+  margin-left: 100px;
 }  */
 /* .welcome{
-   
-    width: 60%;
-    display: flex;
-    justify-content: end; 
-   align-items: center;
+ 
+  width: 60%;
+  display: flex;
+  justify-content: end; 
+ align-items: center;
+
   
-    
 } */
 
 .activeName{
-    text-align: center;
+  text-align: center;
 }
 .dropdown-item{
-    cursor: pointer;
+  cursor: pointer;
 }
 .cs-message__content{
-  margin: 5px;
-    background: #F8FCFF !important;
+margin: 5px;
+  background: #F8FCFF !important;
 box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1) !important;
 border-radius: 18px !important;
 
 padding: 10px !important;
 }
 .chat-container{
-  
-    background: #FFFFFF !important;
+
+  background: #FFFFFF !important;
 }
 /* .message-time{
-  display: flex;
-  justify-content: space-between;
+display: flex;
+justify-content: space-between;
 } */
 .date-separator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px 0;
-    font-weight: bold;
-    color: #555;
-    text-transform: uppercase;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+  font-weight: bold;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.scrollbar-container{
+  /* height: 100vh; */
+}
+.account-setting{
+  text-decoration: none;
+  color: black;
+}
+.message-time{
+ float: right;
+ font-size: 11px;
+}
+.active{
+  background-color: white;
+}
+.active:hover{
+  background-color: white;
+}
+a{
+ text-decoration: none;
+}
+
+@media only screen and (max-width: 768px) { 
+  .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps {
+       
   
-  .scrollbar-container{
-    /* height: 100vh; */
-  }
-  .account-setting{
-    text-decoration: none;
-    color: black;
-  }
-  .message-time{
-   float: right;
-   font-size: 11px;
-  }
-  .active{
-    background-color: white;
-  }
-  .active:hover{
-    background-color: white;
-  }
-  a{
-   text-decoration: none;
-  }
-  
- @media only screen and (max-width: 768px) { 
-    .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps {
-         
+     /* display: flex; */
+     /* justify-content: center; */
     
-       /* display: flex; */
-       /* justify-content: center; */
-      
-       width: 100% !important;
-       
-    } 
-    .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps.ps--active-x {
-       
-             
-        width: 100% !important;
+     width: 100% !important;
      
-       
-        display: none;
-        
-     } 
+  } 
+  .scrollbar-container.cs-sidebar.cs-sidebar--left.sidebar.ps.ps--active-x {
+     
+           
+      width: 100% !important;
    
-   .image{
-    display: none;
-   }
-    
-    }  
+     
+      display: none;
+      
+   } 
+ 
+ .image{
+  display: none;
+ }
+ .cs-main-container--responsive .cs-search{
+  display: flex;
+ }
+  }  

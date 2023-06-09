@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import FrontPage from './FrontPage';
 import GlobalContext from "./Context/context"
 import { BrowserRouter } from 'react-router-dom';
-import OneSignal from 'react-onesignal';
+// import OneSignal from 'react-onesignal';
 ReactDOM.render(
 
 
@@ -39,14 +39,14 @@ ReactDOM.render(
 </script> */}
 
 
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer>
+{/* <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" defer>
   window.OneSignal = window.OneSignal || [];
   OneSignal.push(function() {
     OneSignal.init({
       appId: "2924c1c9-91a4-48b0-8851-284509bcf848",
     })
   });
-</script>
+</script> */}
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

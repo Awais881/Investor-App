@@ -7,6 +7,8 @@ import { GlobalContext } from './Context/context';
 import { Routes, Route, Link,  Navigate , useMatch} from "react-router-dom"
 import ForgotPsword from './components/login/ForgotPsword'
 import ChatScreen from './components/chatscreen'
+import OneSignal from 'react-onesignal';
+
 
 // import UsersState from './Context/reducer';
 import AccountSetting from './accountSettingPage/AccountSetting'
@@ -27,6 +29,12 @@ const FrontPage = () => {
     console.log('state', state)
     console.log('state detail', state.user)
     // setUserToken(state.user)
+    useEffect(() => {
+
+      
+         
+      OneSignal.init({ appId: '91f4fb39-5e4a-44a0-b144-f24e77a106fa' });
+     }, [])
     const headers = {
         headers: {
           Authorization: `Bearer ${user_Token}`,
@@ -86,24 +94,21 @@ const FrontPage = () => {
 
 
 
-            {(state.isLogin != (null || '' || undefined) && state.isLogin === true) ?
-             
-                     
-                    <Routes>
-                        <Route path="/" element={<App />} />
-                        <Route path='/m/:id/' element={<ChatScreen />} />
-                     
-                        <Route path="/account-setting" element={<AccountSetting />} />
-                        {/* <Route path="*" element={<Navigate to="/" replace={true} />} /> */}
-                        {match ? (
-           <Route path={match.path} element={<ChatScreen />} />
-           ) : (
-         <Route path="*" element={<Navigate to="/" replace={true} />} />
-         )}
-                    </Routes>
-                      
-                
-                : null}
+ {state.isLogin != (null || "" || undefined) && state.isLogin === true ? (
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/m/:id/" element={<ChatScreen />} />
+
+          <Route path="/account-setting" element={<AccountSetting />} />
+          <Route path="*" element={<Navigate to="/" replace={true} />} />
+          <Route path="/m/:uuid" element={<ChatScreen />} />
+          {/* {match ? (
+            <Route path={match.path} element={<ChatScreen />} />
+          ) : (
+            <Route path="*" element={<Navigate to="/" replace={true} />} />
+          )} */}
+        </Routes>
+      ) : null}
 
             {state.isLogin == (null || '' || undefined || false) ?
            

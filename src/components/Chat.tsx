@@ -1,6 +1,6 @@
 import "./chat.css";
 import React from "react";
-import { Link, useMatch  } from "react-router-dom";
+import { Link, useMatch } from "react-router-dom";
 import Loader from "../assets/Rolling-1s-200px.gif";
 import moment from "moment";
 import welcome from "../assets/welcome.svg";
@@ -13,10 +13,12 @@ import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 
-// const bcrypt = require("bcryptjs");
-// import bcrypt from "bcryptjs";
+
 import CryptoJS from "crypto-js";
-import { AES } from "crypto-js";
+
+
+import { AES, enc } from "crypto-js";
+
 import {
   MainContainer,
   Sidebar,
@@ -94,14 +96,13 @@ export const Chat = ({ user }: { user: User }) => {
   });
   const [notificationResponse, setNotificationResponse] = useState({});
 
-  
   const [notification, setNotification] = useState("enable");
   const [sidebarVisible, setSidebarVisible] = useState(true);
 
   const [user_Token, setUserToken] = useState(localStorage.getItem("token"));
   const [userId, setUserId] = useState(localStorage.getItem("user_ID"));
   const [sidebarStyle, setSidebarStyle] = useState({});
- 
+
   let [userChannel, setUserChannel] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [chatContainerStyle, setChatContainerStyle] = useState({});
@@ -125,29 +126,36 @@ export const Chat = ({ user }: { user: User }) => {
   //   }
   //     //  setChannelId(channelID)
   // }, [sidebarVisible, setSidebarVisible]);
-  const match = useMatch('/m/:id');
-  const encryptId =  (id: any) => {
-    const encryptedId =  CryptoJS.AES.encrypt(
-      id.toString(),
+
+
+
+
+
+ 
+  const encryptId = (id: any) => {
+    // const encryptedId = btoa(id);
+
+
+    const encryptedId = CryptoJS.AES.encrypt(
+      JSON.stringify(id.toString()),
       "HelloIamAwias"
     ).toString();
-   
+
+    // const encrypted = AES.encrypt(id.toString(), "password").toString();
+    // const encryptedHex = encrypted.ciphertext.toString(enc.Hex);
+    // console.log(encryptedHex);
+
+    const encrypted = AES.encrypt(
+      id.toString(),
+      "secret passphrase"
+    ).toString();
+
+    return enc.Hex.stringify(enc.Utf8.parse(encrypted));
+
+    
     return encryptedId;
   };
-  // const openLink = async (id: any) => {
-  //   // alert("me click");
-
-  //   console.log('id received ==>> ', id);
-  //   // alert(encryptId(id));
-    
-  //   const encryptedId = CryptoJS.AES.encrypt(
-  //     id.toString(),
-  //     "HelloIamAwias"
-  //     ).toString();
-      
-  //     navigate(`/m/${(encryptedId)}`)
-
-  // };
+  
 
   const headers = {
     Authorization: `Bearer ${user_Token}`,
@@ -172,7 +180,7 @@ export const Chat = ({ user }: { user: User }) => {
     async (channelId) => {
       setActiveConvo(channelId);
       setIsScrollbarActive(true);
-      console.log("dddd");
+      
 
       setSelectedChats(true);
       setLoading(true);
@@ -194,8 +202,8 @@ export const Chat = ({ user }: { user: User }) => {
           }
         );
         setMessages(response.data.data);
-        console.log("response ", response);
-        console.log("response message", messages);
+        // console.log("response ", response);
+        // console.log("response message", messages);
 
         // Process the response as needed
       } catch (error) {
@@ -220,14 +228,13 @@ export const Chat = ({ user }: { user: User }) => {
   //   sendNotification()
   // };
 
-
   const handleLikeClick = async (channelId: any) => {
     const updatedState = { ...notificationState };
     const enable = !updatedState[channelId]; // Toggle the notification setting
-  
+
     // Send the notification setting to the server
     await sendNotification(channelId, enable);
-  
+
     // Update the local notification state based on the response
     updatedState[channelId] = enable;
     setNotificationState(updatedState);
@@ -282,12 +289,11 @@ export const Chat = ({ user }: { user: User }) => {
   //     //   }
   //     // }
   //     // Handle the response as needed
-      
+
   //   } catch (error) {
   //     console.log("Error sending notification:", error);
   //   }
   // };
-
 
   const getChannels = async () => {
     setLoading(true);
@@ -302,7 +308,7 @@ export const Chat = ({ user }: { user: User }) => {
 
       // Check notification state for each channel and update local state
       const updatedState = { ...notificationState };
-      channels.forEach((channel :any) => {
+      channels.forEach((channel: any) => {
         const channelId = channel.channel_id;
         const isNotificationEnabled = channel.notification === "enable";
         updatedState[channelId] = isNotificationEnabled;
@@ -325,9 +331,9 @@ export const Chat = ({ user }: { user: User }) => {
   //     );
 
   //     setUserChannel(response?.data?.data);
-    
+
   //     //  setActiveName(response?.data?.data.channel_details[0].name)
-   
+
   //     console.log("channel ids ", response.data.data);
   //   } catch (error) {
   //     console.log("axios error: ", error);
@@ -370,10 +376,51 @@ export const Chat = ({ user }: { user: User }) => {
   //   }
 
   // }, [activeName]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     if (activeConvo) {
+  //       handleConversationClick(activeConvo);
+  //     }
+  //   }, 10000);
+
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [activeConvo, handleConversationClick]);
+  useEffect(() => {
+    let isNewMessage = false; // Flag to track new messages
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${state.baseUrl}api/channel/message/${activeConvo}`,
+          { headers }
+        );
+
+        if (response.data.data.length > messages.length) {
+          // New message(s) received
+          isNewMessage = true;
+          setMessages(response.data.data);
+        }
+      } catch (error) {
+        console.log("Error fetching messages:", error);
+      }
+    };
+
+    const interval = setInterval(() => {
+      if (activeConvo) {
+        fetchData();
+      }
+    }, 5000); // Call the function every 10 seconds (10000 milliseconds)
+
+    return () => {
+      clearInterval(interval); // Clean up the interval on component unmount
+    };
+  }, [activeConvo, messages.length, state.baseUrl, headers]);
 
   useEffect(() => {
-    console.log("user channel details: ", userChannel);
-    console.log("user message details: ", messages);
+    // console.log("user channel details: ", userChannel);
+    // console.log("user message details: ", messages);
   }, [userChannel, messages]);
 
   const MessageTime = ({ time }: any) => {
@@ -381,7 +428,7 @@ export const Chat = ({ user }: { user: User }) => {
   };
   useEffect(() => {
     getChannels();
-    // getMessages();
+    // handleConversationClick()
 
     if (sidebarVisible) {
       setSidebarStyle({
@@ -516,16 +563,25 @@ export const Chat = ({ user }: { user: User }) => {
 
     return undefined;
   }, [activeConversation, getUser]);
-
+  interface WindowWithWebView extends Window {
+    ReactNativeWebView?: {
+      postMessage(message: string): void;
+    };
+  }
   const logout = () => {
-    // dispatch({
-    //   type: 'USER_LOGOUT',
-
-    // })
+   
+    
     dispatch({
       type: "USER_LOGOUT",
     });
     localStorage.clear();
+    //  if (window.ReactNativeWebView) {
+    //   window.ReactNativeWebView.postMessage("logout");
+    // }
+    const windowWithWebView = window as WindowWithWebView;
+    if (windowWithWebView.ReactNativeWebView) {
+      windowWithWebView.ReactNativeWebView.postMessage("logout");
+    }
     navigate("/login");
   };
 
@@ -697,19 +753,15 @@ export const Chat = ({ user }: { user: User }) => {
               />
 
               <ConversationHeader.Actions>
-               
                 <div onClick={() => handleLikeClick(notificationChannelId)}>
-               
                   {notificationState[notificationChannelId] ? (
                     <NotificationsActiveOutlinedIcon color="primary" />
-                    ) : (
-                      
-                      <NotificationsOffIcon color="primary" />
+                  ) : (
+                    <NotificationsOffIcon color="primary" />
                   )}
                 </div>
               </ConversationHeader.Actions>
             </ConversationHeader>
-           
 
             <MessageList className="messagesList">
               {messages.map((g: any, index: number) => {
@@ -770,23 +822,11 @@ export const Chat = ({ user }: { user: User }) => {
                       {/* <span onClick={() => openLink(g.id)}> */}
 
                       {g.content_type === "html" ? (
-
-                  // <Message.HtmlContent  
-                  // html={`
-                  //   ${`${state.localURI}/m/${g.id}`}<span class="message-time">'
-                  //    ${moment(g.created_at).format("hh:mm A")}
-                  //      </span>`}
-                  //      ></Message.HtmlContent>
-
-                  <Message.HtmlContent  
-      html={`<a href="/m/${encryptId(g.id)}">
-      ${`${state.localURI}/m/${encryptId(g.id)}`}</a> <span class="message-time">
-      ${moment(g.created_at).format("hh:mm A")}
-      </span>`}
-    ></Message.HtmlContent>
-  
-                   )
-                      : (
+                        <Message.HtmlContent
+                          html={`<a href="/m/${encryptId(g.id)}">${`${state.localURI}/m/${encryptId(g.id)}`}</a> 
+                          <span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
+                        ></Message.HtmlContent>
+                      ) : (
                         <Message.HtmlContent
                           html={`${g.content}<span class="message-time">
       ${moment(g.created_at).format("hh:mm A")}</span>`}
@@ -803,6 +843,7 @@ export const Chat = ({ user }: { user: User }) => {
         )}
       </MainContainer>
     </div>
+ 
   );
 };
 export default Chat;
