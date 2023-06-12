@@ -2,6 +2,7 @@ import "./chat.css";
 import React from "react";
 import { Link, useMatch } from "react-router-dom";
 import Loader from "../assets/Rolling-1s-200px.gif";
+import image from '../assets/hashtag.png'
 import moment from "moment";
 import welcome from "../assets/welcome.svg";
 import { useMemo, useCallback, useEffect, useContext, useState } from "react";
@@ -12,13 +13,9 @@ import InfoIcon from "@mui/icons-material/Info";
 import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
-
-
 import CryptoJS from "crypto-js";
 
-
 import { AES, enc } from "crypto-js";
-
 import {
   MainContainer,
   Sidebar,
@@ -67,6 +64,8 @@ import { GlobalContext } from "../Context/context";
 import { message } from "antd";
 import { Console, log } from "console";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SkeletonImage from "antd/es/skeleton/Image";
+import { AnyARecord } from "dns";
 export const Chat = ({ user }: { user: User }) => {
   // let { state, dispatch } = useContext(GlobalContext);
   // let { state, dispatch } = useContext(GlobalContext);
@@ -119,10 +118,12 @@ export const Chat = ({ user }: { user: User }) => {
   const [selectedChats, setSelectedChats] = useState(false);
   let { state, dispatch } = useContext<any>(GlobalContext);
   const [activeConvo, setActiveConvo] = useState(null);
+
+
   // const handleConversationClick = useCallback((channelID) => {
 
   //   if (sidebarVisible) {
-  //     setSidebarVisible(false);
+  //     setSidebarVisible(falsse);
   //   }
   //     //  setChannelId(channelID)
   // }, [sidebarVisible, setSidebarVisible]);
@@ -202,7 +203,7 @@ export const Chat = ({ user }: { user: User }) => {
           }
         );
         setMessages(response.data.data);
-        // console.log("response ", response);
+        console.log("response ", response);
         // console.log("response message", messages);
 
         // Process the response as needed
@@ -765,6 +766,8 @@ export const Chat = ({ user }: { user: User }) => {
 
             <MessageList className="messagesList">
               {messages.map((g: any, index: number) => {
+                // SkeletonImage()
+             
                 const currentDate = moment(g.created_at).format("D/M/YY");
                 const previousDate =
                   index > 0
@@ -811,15 +814,14 @@ export const Chat = ({ user }: { user: User }) => {
 
                       )}
                     </Message> */}
-                    <Message
+                    {/* <Message
                       className="messages"
-                      // onClick={() => openLink(g.id)}
                       model={{
                         direction: "incoming",
                         position: "single",
                       }}
                     >
-                      {/* <span onClick={() => openLink(g.id)}> */}
+                     
 
                       {g.content_type === "html" ? (
                         <Message.HtmlContent
@@ -828,11 +830,76 @@ export const Chat = ({ user }: { user: User }) => {
                         ></Message.HtmlContent>
                       ) : (
                         <Message.HtmlContent
+                       
                           html={`${g.content}<span class="message-time">
       ${moment(g.created_at).format("hh:mm A")}</span>`}
-                        ></Message.HtmlContent>
+                         ></Message.HtmlContent>
                       )}
-                    </Message>
+
+                    </Message> */}
+                  <Message
+  className="messages"
+  model={{
+    direction: "incoming",
+    position: "single",
+  }}
+>
+  {g.content_type === 'html' ? (
+    <Message.HtmlContent
+      html={`<a href="/m/${encryptId(g.id)}">${state.localURI}/m/${encryptId(g.id)}</a>
+        <span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
+    ></Message.HtmlContent>
+  ) : g.content_type === 'image' ? (
+    // <Message.ImageContent
+    //   src= {g.link}
+    //   alt="Message Image"
+    //   width={200} 
+    
+      
+    // />
+    <Message.HtmlContent
+    html={`<image src="${g.link}" alt="some">
+     `}
+  ></Message.HtmlContent>
+  ) : (
+    <Message.HtmlContent
+      html={`${g.content}<span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
+    ></Message.HtmlContent>
+  )}
+</Message>
+
+{/* <Message
+        className="messages"
+        model={{
+          direction: 'incoming',
+          position: 'single',
+        }}
+      >
+        {g.content_type === 'html' ? (
+          <Message.HtmlContent
+            html={`<a href="/m/${encryptId(g.id)}">${state.localURI}/m/${encryptId(g.id)}</a>
+              <span class="message-time">${moment(g.created_at).format('hh:mm A')}</span>`}
+          ></Message.HtmlContent>
+        ) : g.content_type === 'image' ? (
+          <div onClick={() => handleImageClick(index)}>
+            <img src={Loader} alt="Message Image" className="message-image" />
+          </div>
+        ) : (
+          <Message.HtmlContent
+            html={`${g.content}<span class="message-time">${moment(g.created_at).format('hh:mm A')}</span>`}
+          ></Message.HtmlContent>
+        )}
+        
+      </Message>
+
+      {lightboxIsOpen && (
+        <Lightbox
+          mainSrc={g.link}
+          onCloseRequest={() => setLightboxIsOpen(false)}
+        />
+      )} */}
+
+
                   </React.Fragment>
                 );
               })}
