@@ -69,6 +69,17 @@ import { AnyARecord } from "dns";
 export const Chat = ({ user }: { user: User }) => {
   // let { state, dispatch } = useContext(GlobalContext);
   // let { state, dispatch } = useContext(GlobalContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleImageClick = () => {
+    setIsModalOpen(true);
+    console.log("gfdgf");
+    
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   let previousDate: any = null;
   // const encryptId = (id :any) => {
@@ -119,7 +130,7 @@ export const Chat = ({ user }: { user: User }) => {
   let { state, dispatch } = useContext<any>(GlobalContext);
   const [activeConvo, setActiveConvo] = useState(null);
 
-
+  const [image, setImage] = useState("");
   // const handleConversationClick = useCallback((channelID) => {
 
   //   if (sidebarVisible) {
@@ -130,7 +141,10 @@ export const Chat = ({ user }: { user: User }) => {
 
 
 
-
+  const Image = () => {
+    console.log("sds");
+    
+  }
 
  
   const encryptId = (id: any) => {
@@ -837,11 +851,12 @@ export const Chat = ({ user }: { user: User }) => {
                       )}
 
                     </Message> */}
-                  <Message
+                  <Message  
   className="messages"
   model={{
     direction: "incoming",
     position: "single",
+   
   }}
 >
   {g.content_type === 'html' ? (
@@ -849,23 +864,43 @@ export const Chat = ({ user }: { user: User }) => {
       html={`<a href="/m/${encryptId(g.id)}">${state.localURI}/m/${encryptId(g.id)}</a>
         <span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
     ></Message.HtmlContent>
-  ) : g.content_type === 'image' ? (
+  ) : g.content_type === 'image' ? 
+  (
+   
     // <Message.ImageContent
-    //   src= {g.link}
+    //   src= {HashImage}
     //   alt="Message Image"
     //   width={200} 
-    
-      
+     
+    //   onClick={Image}
     // />
-    <Message.HtmlContent
-    html={`<image src="${g.link}" alt="some">
-     `}
+   
+    //     <Message.ImageContent
+    //    src= {HashImage}
+    //    alt="Message Image"
+    //    width={200} 
+     
+    
+    //  />s
+    <Message.HtmlContent 
+    html={`<div  onClick={Image}>
+    <img src="${HashImage}"  alt="pics"  class="images"    />
+    </div>
+      `}
   ></Message.HtmlContent>
-  ) : (
+    
+    
+  
+    
+  
+  )
+   : (
     <Message.HtmlContent
       html={`${g.content}<span class="message-time">${moment(g.created_at).format("hh:mm A")}</span>`}
     ></Message.HtmlContent>
   )}
+  
+  
 </Message>
 
 {/* <Message
